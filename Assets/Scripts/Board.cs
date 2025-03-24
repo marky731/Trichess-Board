@@ -5,6 +5,9 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     private Dictionary<string, (double x, double y)> positions;
+    private Dictionary<string, string> player1InitialPos;
+    private Dictionary<string, string> player2InitialPos;
+    private Dictionary<string, string> player3InitialPos;
 
     public Board()
     {
@@ -45,6 +48,30 @@ public class Board : MonoBehaviour
             { "A3", (1.88, -1.23) }, { "B3", (2.45, -0.92) }, { "C3", (3.00, -0.67) }, { "D3", (3.56, -0.47) },
             { "A2", (2.08, -1.58) }, { "B2", (2.57, -1.42) }, { "C2", (3.07, -1.34) }, { "D2", (3.60, -1.15) },
             { "A1", (2.26, -1.99) }, { "B1", (2.70, -1.92) }, { "C1", (3.17, -1.90) }, { "D1", (3.63, -1.88) }
+        };
+
+        player1InitialPos = new Dictionary<string, string>
+        {
+            { "rook1", "L8" }, { "knight1", "K8" }, { "bishop1", "J8" }, { "queen", "I8" },
+            { "king", "D8" }, { "bishop2", "C8" }, { "knight2", "B8" }, { "rook2", "A8" },
+            { "pawn1", "L7" }, { "pawn2", "K7" }, { "pawn3", "J7" }, { "pawn4", "I7" },
+            { "pawn5", "D7" }, { "pawn6", "C7" }, { "pawn7", "B7" }, { "pawn8", "A7" }
+        };
+
+        player2InitialPos = new Dictionary<string, string>
+        {
+            { "rook1", "A1" }, { "knight1", "B1" }, { "bishop1", "C1" }, { "queen", "D1" },
+            { "king", "E1" }, { "bishop2", "F1" }, { "knight2", "G1" }, { "rook2", "H1" },
+            { "pawn1", "A2" }, { "pawn2", "B2" }, { "pawn3", "C2" }, { "pawn4", "D2" },
+            { "pawn5", "E2" }, { "pawn6", "F2" }, { "pawn7", "G2" }, { "pawn8", "H2" }
+        };
+
+        player3InitialPos = new Dictionary<string, string>
+        {
+            { "rook1", "H12" }, { "knight1", "G12" }, { "bishop1", "F12" }, { "queen", "E12" },
+            { "king", "I11" }, { "bishop2", "J12" }, { "knight2", "K12" }, { "rook2", "L12" },
+            { "pawn1", "H11" }, { "pawn2", "G11" }, { "pawn3", "F11" }, { "pawn4", "E10" },
+            { "pawn5", "I11" }, { "pawn6", "J11" }, { "pawn7", "K11" }, { "pawn8", "L11" }
         };
     }
 
