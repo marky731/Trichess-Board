@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Model.ChessboardMain.Pieces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,17 +8,20 @@ namespace Assets.Model
 {
     public class Field
     {
-        public int X { get; }
-        public int Y { get; }
-        public object OccupiedPiece { get; internal set; }
 
-        public Field(int x, int y)
+        public double X { get; }
+        public double Y { get; }
+        public Piece OccupiedPiece { get; internal set; }
+        public string Position => $"{X},{Y}";
+
+
+        public Field(double x, double y)
         {
             X = x;
             Y = y;
         }
 
-        public bool Equals(int x, int y)
+        public bool Equals(double x, double y)
         {
             return X == x && Y == y;
         }

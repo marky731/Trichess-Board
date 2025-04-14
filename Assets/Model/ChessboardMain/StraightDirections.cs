@@ -10,12 +10,17 @@ namespace Assets.Model.ChessboardMain
     {
         private static readonly HashSet<Direction> DIRECTIONS = new HashSet<Direction>
         {
-            new Direction(0, 1),
-            new Direction(-1, 0),
-            new Direction(-1, -1),
-            new Direction(0, -1),
-            new Direction(1, 0),
-            new Direction(1, 1)
+            //  Beyaz taşları için düz yönler
+            Direction.WhiteForward,
+            Direction.WhiteBackward,
+
+            //  Siyah taşları için düz yönler
+            Direction.BlackForward,
+            Direction.BlackBackward,
+
+            //  Gri taşları için düz yönler
+            Direction.GrayForward,
+            Direction.GrayBackward
         };
 
         public static IReadOnlyCollection<Direction> Get()

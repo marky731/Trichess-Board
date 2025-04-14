@@ -137,6 +137,15 @@ namespace Assets.Model.ChessboardMain.Pieces
 
         // Oyuncunun sırası kimde?
         public PieceColor CurrentPlayerColor { get; private set; } = PieceColor.White; // Başlangıçta beyaz başlasın
+        public void NextTurn()
+        {
+            if (CurrentPlayerColor == PieceColor.White)
+                CurrentPlayerColor = PieceColor.Gray;
+            else if (CurrentPlayerColor == PieceColor.Gray)
+                CurrentPlayerColor = PieceColor.Black;
+            else
+                CurrentPlayerColor = PieceColor.White;
+        }
 
         // Hamle sonrası şah tehdit altında mı?
         public bool WouldKingBeInCheckAfterMove(Move move)
