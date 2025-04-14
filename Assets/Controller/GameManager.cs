@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+            Debug.Log("Game started");
         // Eðer board veya pieceView atanmadýysa, hata mesajý basýlýr
         if (board == null || pieceView == null)
         {

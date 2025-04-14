@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: f3da8788fd5f7f94a8df74a781309ff2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - boardPrefab: {fileID: 6127853421019857553, guid: e1db9e906ee1f4ff3980579cd516bbad, type: 3}
+  - blackPawnPrefab: {fileID: 543884079680738052, guid: 6e778287ef085f049803b4f529580a96, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
