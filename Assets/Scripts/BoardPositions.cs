@@ -2,16 +2,40 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Board : MonoBehaviour
+/// <summary>
+/// Represents the chess board positions and initial piece placements.
+/// </summary>
+public class BoardPositions : MonoBehaviour
 {
-    private Dictionary<string, (double x, double y)> positions;
+    #region Private Fields
+    
+    private Dictionary<string, (double x, double y)> cellPositions;
     private Dictionary<string, string> player1InitialPos;
     private Dictionary<string, string> player2InitialPos;
     private Dictionary<string, string> player3InitialPos;
+    
+    #endregion
 
-    public Board()
+    #region Unity Lifecycle Methods
+    
+    /// <summary>
+    /// Initializes the board when the GameObject is created.
+    /// </summary>
+    private void Awake()
     {
-        positions = new Dictionary<string, (double, double)>
+        InitializeBoard();
+    }
+    
+    #endregion
+
+    #region Initialization
+    
+    /// <summary>
+    /// Initializes the board with cell positions and initial piece placements.
+    /// </summary>
+    private void InitializeBoard()
+    {
+        cellPositions = new Dictionary<string, (double, double)>
         {
             // First block
             { "L8", (2.25, 3.5) }, { "K8", (2.00, 3.10) }, { "J8", (1.85, 2.75) }, { "I8", (1.70, 2.25) },
@@ -69,22 +93,57 @@ public class Board : MonoBehaviour
         player3InitialPos = new Dictionary<string, string>
         {
             { "rook1", "H12" }, { "knight1", "G12" }, { "bishop1", "F12" }, { "queen", "E12" },
-            { "king", "I11" }, { "bishop2", "J12" }, { "knight2", "K12" }, { "rook2", "L12" },
+            { "king", "I12" }, { "bishop2", "J12" }, { "knight2", "K12" }, { "rook2", "L12" },
             { "pawn1", "H11" }, { "pawn2", "G11" }, { "pawn3", "F11" }, { "pawn4", "E10" },
             { "pawn5", "I11" }, { "pawn6", "J11" }, { "pawn7", "K11" }, { "pawn8", "L11" }
         };
     }
+    
+    #endregion
 
+    #region Public Methods
+    
+    /// <summary>
+    /// Gets the position coordinates for a specified cell.
+    /// </summary>
+    /// <param name="cell">The cell identifier (e.g., "A1", "L12").</param>
+    /// <returns>The x,y coordinates of the cell, or null if the cell doesn't exist.</returns>
     public (double x, double y)? GetPosition(string cell)
     {
-        return positions.TryGetValue(cell, out var position) ? position : null;
+        return cellPositions.TryGetValue(cell, out var position) ? position : null;
     }
 
+    /// <summary>
+    /// Prints the board cell positions to the debug console.
+    /// </summary>
     public void PrintBoard()
     {
-        foreach (var kvp in positions)
+        foreach (var kvp in cellPositions)
         {
-            Console.WriteLine($"{kvp.Key}: ({kvp.Value.x}, {kvp.Value.y})");
+            Debug.Log($"{kvp.Key}: ({kvp.Value.x}, {kvp.Value.y})");
         }
     }
+    
+    /// <summary>
+    /// Gets the initial position dictionary for a specific player.
+    /// </summary>
+    /// <param name="playerNumber">The player number (1-3).</param>
+    /// <returns>A dictionary mapping piece names to their initial positions.</returns>
+    public Dictionary<string, string> GetPlayerInitialPositions(int playerNumber)
+    {
+        switch (playerNumber)
+        {
+            case 1:
+                return new Dictionary<string, string>(player1InitialPos);
+            case 2:
+                return new Dictionary<string, string>(player2InitialPos);
+            case 3:
+                return new Dictionary<string, string>(player3InitialPos);
+            default:
+                Debug.LogError($"Invalid player number: {playerNumber}. Must be 1-3.");
+                return null;
+        }
+    }
+    
+    #endregion
 }

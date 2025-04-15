@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d78fc8d449ec74273987760d543bee7f
+guid: 5a9ca62cdab384761b2ac8c65d83c017
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4496427266431187243
-    second: Screenshot_2025-03-10_at_16.15.07-removebg-preview_0
+      213: -5823174621868632760
+    second: png-clipart-chess-piece-knight-bishop-king-chess-white-face-removebg-preview_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,32 +97,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -139,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Screenshot_2025-03-10_at_16.15.07-removebg-preview_0
+      name: png-clipart-chess-piece-knight-bishop-king-chess-white-face-removebg-preview_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 11
-        width: 536
-        height: 439
+        x: 85
+        y: 0
+        width: 427
+        height: 418
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5d60df9693b7991c0800000000000000
-      internalID: -4496427266431187243
+      spriteID: 845537ea88def2fa0800000000000000
+      internalID: -5823174621868632760
       vertices: []
       indices: 
       edges: []
@@ -170,7 +144,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Screenshot_2025-03-10_at_16.15.07-removebg-preview_0: -4496427266431187243
+      png-clipart-chess-piece-knight-bishop-king-chess-white-face-removebg-preview_0: -5823174621868632760
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,26 +1,75 @@
-//Bu sýnýf, satranç tahtasýný ve taþlarýný temsil eder.
-//Ayný zamanda, taþlarýn hamlelerini kontrol eder ve oyunda bir oyuncunun þah-mat olup olmadýðýný denetler.
-//Tahtadaki her hücre için bir pozisyon belirler, taþlarýn geçerli hamlelerini doðrular ve þahýn tehdit altýnda olup olmadýðýný kontrol eder.
 using Assets.Controller;
+// We're explicitly using the Controller version of MoveValidator
 using Assets.Model;
+using Assets.Model.ChessboardMain;
 using Assets.Model.ChessboardMain.Pieces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents the chess board, its pieces, and game logic.
+/// Handles move validation, check/checkmate detection, and board state.
+/// </summary>
 public class Board : MonoBehaviour
 {
-    // Tahtadaki tüm hücrelerin pozisyonlarýný saklar (örneðin "A1", "B2" gibi)
+    #region Private Fields
+    
+    /// <summary>
+    /// Stores the positions of all cells on the board (e.g., "A1", "B2").
+    /// </summary>
     private Dictionary<string, (double x, double y)> positions;
 
-    // Tahtadaki her bir hücreyi temsil eden Field nesnelerini saklar
+    /// <summary>
+    /// Stores Field objects representing each cell on the board.
+    /// </summary>
     private Dictionary<string, Field> fields = new Dictionary<string, Field>();
 
-    // Tahtadaki taþlarý temsil eden Piece nesnelerini saklar
+    /// <summary>
+    /// Stores all pieces currently on the board.
+    /// </summary>
     private List<Piece> pieces = new List<Piece>();
 
-    // Board sýnýfýnýn yapýcý metodu, pozisyonlarý baþlatýr
+    /// <summary>
+    /// Move validator for checking valid moves.
+    /// </summary>
+    private readonly Assets.Controller.MoveValidator _validator;
+
+    /// <summary>
+    /// Current player's color.
+    /// </summary>
+    public PieceColor CurrentPlayerColor { get; set; }
+    
+    #endregion
+
+    #region Constructors
+    
+    /// <summary>
+    /// Default constructor - initializes the board positions.
+    /// </summary>
     public Board()
+    {
+        InitializePositions();
+    }
+
+    /// <summary>
+    /// Constructor with chessboard parameter - initializes the board and move validator.
+    /// </summary>
+    /// <param name="chessboard">The chessboard to use for move validation.</param>
+    public Board(Assets.Model.ChessboardMain.Pieces.Chessboard chessboard)
+    {
+        InitializePositions();
+        _validator = new Assets.Controller.MoveValidator(chessboard);
+    }
+    
+    #endregion
+
+    #region Initialization
+    
+    /// <summary>
+    /// Initializes the board positions.
+    /// </summary>
+    private void InitializePositions()
     {
         positions = new Dictionary<string, (double, double)>
         {
@@ -61,8 +110,16 @@ public class Board : MonoBehaviour
             { "A1", (2.26, -1.99) }, { "B1", (2.70, -1.92) }, { "C1", (3.17, -1.90) }, { "D1", (3.63, -1.88) }
         };
     }
+    
+    #endregion
 
-    // Belirtilen hücrenin pozisyonunu döndüren metod
+    #region Public Methods
+    
+    /// <summary>
+    /// Gets the position coordinates for a specified cell.
+    /// </summary>
+    /// <param name="cell">The cell identifier (e.g., "A1", "L12").</param>
+    /// <returns>The Vector2 position of the cell, or Vector2.zero if the cell doesn't exist.</returns>
     public Vector2 GetPosition(string cell)
     {
         if (positions.TryGetValue(cell, out var position))
@@ -70,11 +127,15 @@ public class Board : MonoBehaviour
             return new Vector2((float)position.x, (float)position.y);
         }
 
-        Debug.LogError("Geçersiz konum: " + cell);
+        Debug.LogError("Invalid position: " + cell);
         return Vector2.zero;
     }
 
-    // Belirtilen pozisyon için ilgili Field nesnesini döndüren metod
+    /// <summary>
+    /// Gets the Field object for a specified position.
+    /// </summary>
+    /// <param name="position">The position identifier (e.g., "A1", "L12").</param>
+    /// <returns>The Field object at the specified position, or null if not found.</returns>
     public Field GetField(string position)
     {
         if (fields.TryGetValue(position, out Field field))
@@ -85,90 +146,50 @@ public class Board : MonoBehaviour
         return null;
     }
 
-    // Tahtadaki tüm hücrelerin pozisyonlarýný konsola yazdýran metod
+    /// <summary>
+    /// Prints the board cell positions to the debug console.
+    /// </summary>
     public void PrintBoard()
     {
         foreach (var kvp in positions)
         {
-            Console.WriteLine($"{kvp.Key}: ({kvp.Value.x}, {kvp.Value.y})");
+            Debug.Log($"{kvp.Key}: ({kvp.Value.x}, {kvp.Value.y})");
         }
     }
 
-    // Verilen oyuncunun þahýný bulan metod
-    private Piece FindKing(int playerId)
-    {
-        foreach (Piece piece in pieces)
-        {
-            if (piece is King && piece.PlayerId == playerId)
-            {
-                return piece;
-            }
-        }
-        return null; // Þah bulunamazsa null döndür
-    }
-
-    // Hamle doðrulama nesnesi
-    private MoveValidator _validator;
-
-    // Board yapýcý metodu, MoveValidator'ý baþlatýr
-    public Board(Chessboard chessboard)
-    {
-        _validator = new MoveValidator(chessboard);
-    }
-
-    // Verilen alanýn dolu olup olmadýðýný kontrol eden metod
+    /// <summary>
+    /// Checks if a field is occupied by a piece.
+    /// </summary>
+    /// <param name="field">The field to check.</param>
+    /// <returns>True if the field is occupied, false otherwise.</returns>
     public bool IsOccupied(Field field)
     {
         return field.OccupiedPiece != null;
     }
 
-    // Verilen taþ ve hamle ile geçerli bir hamle olup olmadýðýný kontrol eder
+    /// <summary>
+    /// Checks if a move is valid for a piece.
+    /// </summary>
+    /// <param name="piece">The piece to move.</param>
+    /// <param name="move">The move to validate.</param>
+    /// <returns>True if the move is valid, false otherwise.</returns>
     public bool IsValidMove(Piece piece, Move move)
     {
         return _validator.IsValidMove(piece, move);
     }
 
-    // Þahýn tehdit altýnda olup olmadýðýný kontrol eder
-    private bool IsKingInCheck(Piece king, Board board)
-    {
-        foreach (Piece piece in pieces)
-        {
-            if (piece.PlayerId != king.PlayerId) // Düþman taþlarý kontrol et
-            {
-                List<string> possibleMoves = piece.GetPossibleMoves(board);
-                if (possibleMoves.Contains(king.CurrentPosition))
-                {
-                    return true; // Þah tehdit altýnda
-                }
-            }
-        }
-        return false; // Þah güvende
-    }
-
-    // Verilen oyuncunun hamlesi olup olmadýðýný kontrol eder
-    private bool HasValidMove(int playerId, Board board)
-    {
-        foreach (Piece piece in pieces)
-        {
-            if (piece.PlayerId == playerId)
-            {
-                List<string> possibleMoves = piece.GetPossibleMoves(board);
-                if (possibleMoves.Count > 0)
-                {
-                    return true; // En az bir hamle varsa mat deðil
-                }
-            }
-        }
-        return false; // Hiç hamle yoksa oyuncu mat
-    }
-
-    // Verilen oyuncu için mat durumunu kontrol eder
+    /// <summary>
+    /// Checks if a player is in checkmate.
+    /// </summary>
+    /// <param name="playerId">The player ID to check.</param>
+    /// <param name="board">The board to check on.</param>
+    /// <returns>True if the player is in checkmate, false otherwise.</returns>
     public bool IsCheckmate(int playerId, Board board)
     {
         Piece king = FindKing(playerId);
         if (king == null)
         {
-            Debug.Log("Player " + playerId + " þahýný kaybetti, elendi!");
+            Debug.Log("Player " + playerId + " has lost their king and is eliminated!");
             return true;
         }
 
@@ -182,7 +203,111 @@ public class Board : MonoBehaviour
             return false;
         }
 
-        Debug.Log("Player " + playerId + " þah-mat oldu!");
+        Debug.Log("Player " + playerId + " is in checkmate!");
         return true;
     }
+
+    /// <summary>
+    /// Checks if a move would leave the king in check.
+    /// </summary>
+    /// <param name="move">The move to check.</param>
+    /// <returns>True if the king would be in check after the move, false otherwise.</returns>
+    public bool WouldKingBeInCheckAfterMove(Move move)
+    {
+        // Implementation would go here
+        // This is a placeholder for the method referenced in MoveValidator
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the path between two fields.
+    /// </summary>
+    /// <param name="source">The source field.</param>
+    /// <param name="destination">The destination field.</param>
+    /// <returns>A list of fields representing the path.</returns>
+    public List<Field> GetPath(Field source, Field destination)
+    {
+        // Implementation would go here
+        // This is a placeholder for the method referenced in MoveValidator
+        return new List<Field>();
+    }
+
+    /// <summary>
+    /// Checks if a field is within the bounds of the board.
+    /// </summary>
+    /// <param name="field">The field to check.</param>
+    /// <returns>True if the field is within bounds, false otherwise.</returns>
+    public bool IsWithinBounds(Field field)
+    {
+        // Implementation would go here
+        // This is a placeholder for the method referenced in MoveValidator
+        return true;
+    }
+    
+    #endregion
+
+    #region Private Methods
+    
+    /// <summary>
+    /// Finds the king piece for a specified player.
+    /// </summary>
+    /// <param name="playerId">The player ID to find the king for.</param>
+    /// <returns>The king piece, or null if not found.</returns>
+    private Piece FindKing(int playerId)
+    {
+        foreach (Piece piece in pieces)
+        {
+            if (piece is King && piece.PlayerId == playerId)
+            {
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Checks if a king is in check.
+    /// </summary>
+    /// <param name="king">The king piece to check.</param>
+    /// <param name="board">The board to check on.</param>
+    /// <returns>True if the king is in check, false otherwise.</returns>
+    private bool IsKingInCheck(Piece king, Board board)
+    {
+        foreach (Piece piece in pieces)
+        {
+            if (piece.PlayerId != king.PlayerId) // Check enemy pieces
+            {
+                List<string> possibleMoves = piece.GetPossibleMoves(board);
+                if (possibleMoves.Contains(king.CurrentPosition))
+                {
+                    return true; // King is in check
+                }
+            }
+        }
+        return false; // King is safe
+    }
+
+    /// <summary>
+    /// Checks if a player has any valid moves.
+    /// </summary>
+    /// <param name="playerId">The player ID to check.</param>
+    /// <param name="board">The board to check on.</param>
+    /// <returns>True if the player has at least one valid move, false otherwise.</returns>
+    private bool HasValidMove(int playerId, Board board)
+    {
+        foreach (Piece piece in pieces)
+        {
+            if (piece.PlayerId == playerId)
+            {
+                List<string> possibleMoves = piece.GetPossibleMoves(board);
+                if (possibleMoves.Count > 0)
+                {
+                    return true; // At least one move exists
+                }
+            }
+        }
+        return false; // No moves available
+    }
+    
+    #endregion
 }

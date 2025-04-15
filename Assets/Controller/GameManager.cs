@@ -1,8 +1,3 @@
-//GameManager sýnýfý, oyun baþlamadan önce tahtada oyuncularýn taþlarýný kuran ve yönetmeye baþlayan ana sýnýftýr.
-//Bu sýnýf, oyunun baþýnda üç oyuncunun taþlarýný baþlatmak için çeþitli fonksiyonlar içerir.
-//Bu taþlar, PieceView sýnýfýný kullanarak görsel olarak sahnede yerleþtirilir.
-//Oyunculara ait taþlar (Beyaz, Gri ve Siyah) uygun pozisyonlarda kurulup, her taþýn rengi ve türü belirlenir.
-
 using Assets.Model;
 using Assets.Model.ChessboardMain.Pieces;
 using Assets.View;
@@ -12,28 +7,28 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Board board;  // Oyun tahtasý
-    public PieceView pieceView;  // Taþlarý yönetmek için
+    public BoardPositions board;  // Oyun tahtasï¿½
+    public PieceView pieceView;  // Taï¿½larï¿½ yï¿½netmek iï¿½in
 
     void Start()
     {
-        // Eðer board veya pieceView atanmadýysa, hata mesajý basýlýr
+        // Eï¿½er board veya pieceView atanmadï¿½ysa, hata mesajï¿½ basï¿½lï¿½r
         if (board == null || pieceView == null)
         {
             Debug.LogError("GameManager: Board veya PieceView eksik!");
             return;
         }
 
-        // Oyuncular (taþlar) kurulumu yapýlýr
+        // Oyuncular (taï¿½lar) kurulumu yapï¿½lï¿½r
         SetupPlayers();
     }
 
-    // Tüm oyuncularý kurar
+    // Tï¿½m oyuncularï¿½ kurar
     void SetupPlayers()
     {
-        SetupPlayer1();  // Beyaz taþlar (Player 1)
-        SetupPlayer2();  // Gri taþlar (Player 2)
-        SetupPlayer3();  // Siyah taþlar (Player 3)
+        SetupPlayer1();  // Beyaz taï¿½lar (Player 1)
+        SetupPlayer2();  // Gri taï¿½lar (Player 2)
+        SetupPlayer3();  // Siyah taï¿½lar (Player 3)
     }
     void SetupPlayer1()
     {
@@ -98,4 +93,3 @@ public class GameManager : MonoBehaviour
         pieceView.SpawnPiece(PieceType.Pawn, "H11", PieceColor.Black);
     }
 }
-

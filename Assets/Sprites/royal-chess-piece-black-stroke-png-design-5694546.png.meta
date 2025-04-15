@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d78fc8d449ec74273987760d543bee7f
+guid: abbdc8b9e99404e09bb2f2de6ec4d7a9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4496427266431187243
-    second: Screenshot_2025-03-10_at_16.15.07-removebg-preview_0
+      213: 6380199868900173098
+    second: royal-chess-piece-black-stroke-png-design-5694546_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,32 +97,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -139,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Screenshot_2025-03-10_at_16.15.07-removebg-preview_0
+      name: royal-chess-piece-black-stroke-png-design-5694546_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 115
         y: 11
-        width: 536
-        height: 439
+        width: 120
+        height: 328
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5d60df9693b7991c0800000000000000
-      internalID: -4496427266431187243
+      spriteID: a25e9cd1af50b8850800000000000000
+      internalID: 6380199868900173098
       vertices: []
       indices: 
       edges: []
@@ -170,7 +144,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Screenshot_2025-03-10_at_16.15.07-removebg-preview_0: -4496427266431187243
+      royal-chess-piece-black-stroke-png-design-5694546_0: 6380199868900173098
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

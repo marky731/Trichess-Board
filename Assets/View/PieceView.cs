@@ -19,11 +19,11 @@ public class PieceView : MonoBehaviour
     public GameObject pawnPrefab;
 
     private Dictionary<PieceType, GameObject> piecePrefabs;
-    private Board board;
+    private BoardPositions board;
 
     void Awake()
     {
-        board = FindFirstObjectByType<Board>();
+        board = FindFirstObjectByType<BoardPositions>();
         if (board == null)
         {
             Debug.LogError("PieceView: Board bulunamadı!");
@@ -74,7 +74,14 @@ public class PieceView : MonoBehaviour
             Debug.LogError("PieceView: Board bulunamadı!");
             return null;
         }
-        return board.GetPosition(notation);
+        
+        var position = board.GetPosition(notation);
+        if (position.HasValue)
+        {
+            return new Vector2((float)position.Value.x, (float)position.Value.y);
+        }
+        
+        return null;
     }
 
     private void SetPieceColor(GameObject pieceObj, PieceColor color)
