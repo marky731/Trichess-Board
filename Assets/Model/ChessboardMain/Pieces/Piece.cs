@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Model.ChessboardMain.Pieces
 {
-    public abstract class Piece
+    public abstract class Piece :MonoBehaviour
     {
         private PieceColor color;
         private bool isSliding;

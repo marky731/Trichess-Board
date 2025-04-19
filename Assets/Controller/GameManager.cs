@@ -1,7 +1,7 @@
-//GameManager sýnýfý, oyun baþlamadan önce tahtada oyuncularýn taþlarýný kuran ve yönetmeye baþlayan ana sýnýftýr.
-//Bu sýnýf, oyunun baþýnda üç oyuncunun taþlarýný baþlatmak için çeþitli fonksiyonlar içerir.
-//Bu taþlar, PieceView sýnýfýný kullanarak görsel olarak sahnede yerleþtirilir.
-//Oyunculara ait taþlar (Beyaz, Gri ve Siyah) uygun pozisyonlarda kurulup, her taþýn rengi ve türü belirlenir.
+//GameManager sï¿½nï¿½fï¿½, oyun baï¿½lamadan ï¿½nce tahtada oyuncularï¿½n taï¿½larï¿½nï¿½ kuran ve yï¿½netmeye baï¿½layan ana sï¿½nï¿½ftï¿½r.
+//Bu sï¿½nï¿½f, oyunun baï¿½ï¿½nda ï¿½ï¿½ oyuncunun taï¿½larï¿½nï¿½ baï¿½latmak iï¿½in ï¿½eï¿½itli fonksiyonlar iï¿½erir.
+//Bu taï¿½lar, PieceView sï¿½nï¿½fï¿½nï¿½ kullanarak gï¿½rsel olarak sahnede yerleï¿½tirilir.
+//Oyunculara ait taï¿½lar (Beyaz, Gri ve Siyah) uygun pozisyonlarda kurulup, her taï¿½ï¿½n rengi ve tï¿½rï¿½ belirlenir.
 
 using Assets.Model;
 using Assets.Model.ChessboardMain.Pieces;
@@ -12,29 +12,29 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Board board;  // Oyun tahtasý
-    public PieceView pieceView;  // Taþlarý yönetmek için
+    public Board board;  // Oyun tahtasï¿½
+    public PieceView pieceView;  // Taï¿½larï¿½ yï¿½netmek iï¿½in
 
     void Start()
     {
             Debug.Log("Game started");
-        // Eðer board veya pieceView atanmadýysa, hata mesajý basýlýr
+        // Eï¿½er board veya pieceView atanmadï¿½ysa, hata mesajï¿½ basï¿½lï¿½r
         if (board == null || pieceView == null)
         {
             Debug.LogError("GameManager: Board veya PieceView eksik!");
             return;
         }
 
-        // Oyuncular (taþlar) kurulumu yapýlýr
+        // Oyuncular (taï¿½lar) kurulumu yapï¿½lï¿½r
         SetupPlayers();
     }
 
-    // Tüm oyuncularý kurar
+    // Tï¿½m oyuncularï¿½ kurar
     void SetupPlayers()
     {
-        SetupPlayer1();  // Beyaz taþlar (Player 1)
-        SetupPlayer2();  // Gri taþlar (Player 2)
-        SetupPlayer3();  // Siyah taþlar (Player 3)
+        SetupPlayer1();  // Beyaz taï¿½lar (Player 1)
+        SetupPlayer2();  // Gri taï¿½lar (Player 2)
+        SetupPlayer3();  // Siyah taï¿½lar (Player 3)
     }
     void SetupPlayer1()
     {

@@ -1,3 +1,4 @@
+using Assets.Model;
 using Assets.Model.ChessboardMain.Pieces;
 using Assets.Model.ChessboardMain.Pieces.Pawn;
 using System.Collections.Generic;
@@ -5,27 +6,31 @@ using UnityEngine;
 
 public class TriChess : MonoBehaviour
 {
-    public GameObject boardPrefab;      // Board prefab'ý (Unity'de atanmalý)
-    public GameObject blackPawnPrefab;  // BlackPawn prefab'ý (Unity'de atanmalý)
+    public GameObject boardPrefab;      // Board prefab'ï¿½ (Unity'de atanmalï¿½)
+    public GameObject blackPawnPrefab;  // BlackPawn prefab'ï¿½ (Unity'de atanmalï¿½)
 
     private Board board;  // Board objesi
 
+    public PieceView pieceView;  // Taï¿½larï¿½ yï¿½netmek iï¿½in
+
+
     void Start()
     {
-        // Board prefab'ýný instantiate et
+        // Board prefab'ï¿½nï¿½ instantiate et
         GameObject boardObject = Instantiate(boardPrefab);
         board = boardObject.GetComponent<Board>();
 
         if (board != null)
         {
             Debug.Log("board is not null");
-            // BlackPawn oluþtur
+            // BlackPawn oluï¿½tur
             GameObject blackPawnObject = Instantiate(blackPawnPrefab);
             BlackPawn blackPawn = blackPawnObject.GetComponent<BlackPawn>();
 
             if (blackPawn != null)
             {
-                // BlackPawn'ýn geçerli hamlelerini al
+                Debug.Log("blackPawn is not null");
+                // BlackPawn'ï¿½n geï¿½erli hamlelerini al
                 List<string> possibleMoves = blackPawn.GetPossibleMoves(board);
                 foreach (string move in possibleMoves)
                 {
@@ -36,6 +41,8 @@ public class TriChess : MonoBehaviour
             {
                 Debug.LogError("BlackPawn script is not attached to the prefab!");
             }
+                    SetupPlayers();
+
         }
         else
         {
@@ -45,6 +52,78 @@ public class TriChess : MonoBehaviour
 
     void Update()
     {
-        // Her frame çalýþacak kod
+        // Her frame ï¿½alï¿½ï¿½acak kod
+    }
+
+        void SetupPlayers()
+    {
+        SetupPlayer1();  // Beyaz taï¿½lar (Player 1)
+        SetupPlayer2();  // Gri taï¿½lar (Player 2)
+        SetupPlayer3();  // Siyah taï¿½lar (Player 3)
+    }
+    void SetupPlayer1()
+    {
+        pieceView.SpawnPiece(PieceType.Rook, "L8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Knight, "K8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Bishop, "J8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Queen, "I8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.King, "D8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Bishop, "C8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Knight, "B8", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Rook, "A8", PieceColor.White);
+
+        pieceView.SpawnPiece(PieceType.Pawn, "L7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "K7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "J7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "I7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "D7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "C7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "B7", PieceColor.White);
+        pieceView.SpawnPiece(PieceType.Pawn, "A7", PieceColor.White);
+    }
+
+    void SetupPlayer2()
+    {
+        pieceView.SpawnPiece(PieceType.Rook, "A1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Knight, "B1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Bishop, "C1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Queen, "D1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.King, "E1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Bishop, "F1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Knight, "G1", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Rook, "H1", PieceColor.Gray);
+
+        pieceView.SpawnPiece(PieceType.Pawn, "A2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "B2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "C2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "D2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "E2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "F2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "G2", PieceColor.Gray);
+        pieceView.SpawnPiece(PieceType.Pawn, "H2", PieceColor.Gray);
+    }
+
+    void SetupPlayer3()
+    {
+        pieceView.SpawnPiece(PieceType.Rook, "L12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Knight, "K12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Bishop, "J12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Queen, "I12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.King, "E12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Bishop, "F12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Knight, "G12", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Rook, "H12", PieceColor.Black);
+
+        pieceView.SpawnPiece(PieceType.Pawn, "L11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "K11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "J11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "I11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "E11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "F11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "G11", PieceColor.Black);
+        pieceView.SpawnPiece(PieceType.Pawn, "H11", PieceColor.Black);
     }
 }
+
+
+
