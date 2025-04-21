@@ -29,6 +29,12 @@ public class PieceView : MonoBehaviour
             Debug.LogError("PieceView: Board bulunamadı!");
         }
 
+        if (kingPrefab == null || queenPrefab == null || rookPrefab == null || bishopPrefab == null || knightPrefab == null || pawnPrefab == null)
+        {
+            Debug.LogError("PieceView: One or more piece prefabs are not assigned!");
+            return;
+        }
+
         piecePrefabs = new Dictionary<PieceType, GameObject>
         {
             { PieceType.King, kingPrefab },

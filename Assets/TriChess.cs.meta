@@ -5,7 +5,15 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - boardPrefab: {fileID: 6127853421019857553, guid: e1db9e906ee1f4ff3980579cd516bbad, type: 3}
-  - blackPawnPrefab: {fileID: 543884079680738052, guid: 6e778287ef085f049803b4f529580a96, type: 3}
+  - blackPawnPrefab1: {fileID: 3433235147802966498, guid: d2d10f2fd81764de2830bb0f804a3899, type: 3}
+  - blackPawnPrefab2: {fileID: 3433235147802966498, guid: 644da15724554436fb6d68f9d6bc1f48, type: 3}
+  - blackPawnPrefab3: {fileID: 3433235147802966498, guid: 7b36b4931dc784ba684d2464c111bfd9, type: 3}
+  - blackPawnPrefab4: {fileID: 3433235147802966498, guid: f67b0d07076c044f0a442e03fbde4a05, type: 3}
+  - blackPawnPrefab5: {fileID: 3433235147802966498, guid: b1760943bf1444bd388f79ad55ad17c7, type: 3}
+  - blackPawnPrefab6: {fileID: 3433235147802966498, guid: 7242e93313d6b4939b2c009426c74059, type: 3}
+  - blackPawnPrefab7: {fileID: 3433235147802966498, guid: ede2da7a2eb9d4b5cbc4ec3f3e7e454b, type: 3}
+  - blackPawnPrefab8: {fileID: 3433235147802966498, guid: bc59067c9ba6944df9693e06a932ac0e, type: 3}
+  - pieceView: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

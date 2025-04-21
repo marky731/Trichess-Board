@@ -7,12 +7,11 @@ using UnityEngine;
 public class TriChess : MonoBehaviour
 {
     public GameObject boardPrefab;      // Board prefab'� (Unity'de atanmal�)
-    public GameObject blackPawnPrefab;  // BlackPawn prefab'� (Unity'de atanmal�)
+    public List<GameObject> blackPawnPrefabs = new List<GameObject>();  // Will hold all pawn prefabs
 
     private Board board;  // Board objesi
 
     public PieceView pieceView;  // Ta�lar� y�netmek i�in
-
 
     void Start()
     {
@@ -23,26 +22,31 @@ public class TriChess : MonoBehaviour
         if (board != null)
         {
             Debug.Log("board is not null");
-            // BlackPawn olu�tur
-            GameObject blackPawnObject = Instantiate(blackPawnPrefab);
-            BlackPawn blackPawn = blackPawnObject.GetComponent<BlackPawn>();
-
-            if (blackPawn != null)
+            
+            // Instantiate all pawns
+            List<BlackPawn> blackPawns = new List<BlackPawn>();
+            
+            foreach (GameObject prefab in blackPawnPrefabs)
             {
-                Debug.Log("blackPawn is not null");
-                // BlackPawn'�n ge�erli hamlelerini al
-                List<string> possibleMoves = blackPawn.GetPossibleMoves(board);
-                foreach (string move in possibleMoves)
+                GameObject pawnObject = Instantiate(prefab);
+                BlackPawn pawn = pawnObject.GetComponent<BlackPawn>();
+                
+                if (pawn != null)
                 {
-                    Debug.Log($"Possible move for Black Pawn: {move}");
+                    blackPawns.Add(pawn);
+                    List<string> possibleMoves = pawn.GetPossibleMoves(board);
+                    foreach (string move in possibleMoves)
+                    {
+                        Debug.Log($"Possible move for Black Pawn: {move}");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"BlackPawn script is not attached to the prefab: {prefab.name}");
                 }
             }
-            else
-            {
-                Debug.LogError("BlackPawn script is not attached to the prefab!");
-            }
-                    SetupPlayers();
 
+            SetupPlayers();
         }
         else
         {
@@ -55,12 +59,13 @@ public class TriChess : MonoBehaviour
         // Her frame �al��acak kod
     }
 
-        void SetupPlayers()
+    void SetupPlayers()
     {
         SetupPlayer1();  // Beyaz ta�lar (Player 1)
         SetupPlayer2();  // Gri ta�lar (Player 2)
         SetupPlayer3();  // Siyah ta�lar (Player 3)
     }
+
     void SetupPlayer1()
     {
         pieceView.SpawnPiece(PieceType.Rook, "L8", PieceColor.White);
