@@ -1,6 +1,6 @@
-//Bu sýnýf, satranç tahtasýný ve taþlarýný temsil eder.
-//Ayný zamanda, taþlarýn hamlelerini kontrol eder ve oyunda bir oyuncunun þah-mat olup olmadýðýný denetler.
-//Tahtadaki her hücre için bir pozisyon belirler, taþlarýn geçerli hamlelerini doðrular ve þahýn tehdit altýnda olup olmadýðýný kontrol eder.
+//Bu s n f, satran  tahtas n  ve ta lar n  temsil eder.
+//Ayn  zamanda, ta lar n hamlelerini kontrol eder ve oyunda bir oyuncunun  ah-mat olup olmad   n  denetler.
+//Tahtadaki her h cre i in bir pozisyon belirler, ta lar n ge erli hamlelerini do rular ve  ah n tehdit alt nda olup olmad   n  kontrol eder.
 using Assets.Controller;
 using Assets.Model;
 using Assets.Model.ChessboardMain.Pieces;
@@ -10,59 +10,59 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    // Tahtadaki tüm hücrelerin pozisyonlarýný saklar (örneðin "A1", "B2" gibi)
+    // Tahtadaki t m h crelerin pozisyonlar n  saklar ( rne in "A1", "B2" gibi)
     private Dictionary<string, (double x, double y)> positions;
 
-    // Tahtadaki her bir hücreyi temsil eden Field nesnelerini saklar
+    // Tahtadaki her bir h creyi temsil eden Field nesnelerini saklar
     private Dictionary<string, Field> fields = new Dictionary<string, Field>();
 
-    // Tahtadaki taþlarý temsil eden Piece nesnelerini saklar
+    // Tahtadaki ta lar  temsil eden Piece nesnelerini saklar
     private List<Piece> pieces = new List<Piece>();
 
-    // Board sýnýfýnýn yapýcý metodu, pozisyonlarý baþlatýr
+    // Board s n f n n yap c  metodu, pozisyonlar  ba lat r
     public Board()
     {
         positions = new Dictionary<string, (double, double)>
         {
             // First block
-            { "L8", (2.25, 3.5) }, { "K8", (2.00, 3.10) }, { "J8", (1.85, 2.75) }, { "I8", (1.70, 2.25) },
-            { "L7", (2.70, 3.45) }, { "K7", (2.57, 2.97) }, { "J7", (2.45, 2.45) }, { "I7", (2.30, 1.95) },
-            { "L6", (3.15, 3.40) }, { "K6", (3.07, 2.84) }, { "J6", (3.05, 2.25) }, { "I6", (2.90, 1.65) },
-            { "L5", (3.60, 3.35) }, { "K5", (3.57, 2.72) }, { "J5", (3.55, 2.05) }, { "I5", (3.50, 1.35) },
+            { "L8", (-1.52, 2.6493) }, { "K8", (-1.718, 2.23) }, { "J8", (-1.88, 1.88) }, { "I8", (-2.072, 1.437) },
+            { "L7", (-1.082, 2.631) }, { "K7", (-1.186, 2.091) }, { "J7", (-1.308, 1.63) }, { "I7", (-1.439, 1.09) },
+            { "L6", (-0.61, 2.573) }, { "K6", (-0.71, 1.97) }, { "J6", (-0.77, 1.38) }, { "I6", (-0.84, 0.77) },
+            { "L5", (-0.15, 2.556) }, { "K5", (-0.18, 1.82) }, { "J5", (-0.225, 1.167) }, { "I5", (-0.246, 0.465) },
 
             // Second block
-            { "L9", (4.05, 3.35) }, { "K9", (4.07, 3.10) }, { "J9", (4.05, 2.05) }, { "I9", (4.10, 1.35) },
-            { "L10", (4.5, 3.40) }, { "K10", (4.57, 2.97) }, { "J10", (4.55, 2.25) }, { "I10", (4.70, 1.65) },
-            { "L11", (4.95, 3.45) }, { "K11", (5.07, 2.84) }, { "J11", (5.05, 2.45) }, { "I11", (5.30, 1.95) },
-            { "L12", (5.30, 3.50) }, { "K12", (5.57, 2.72) }, { "J12", (5.55, 2.75) }, { "I12", (5.90, 2.25) },
+            { "L9", (0.251, 2.55) }, { "K9", (0.3, 1.84) }, { "J9", (0.324, 1.134) }, { "I9", (0.405, 0.446) },
+            { "L10", (0.745, 2.59) }, { "K10", (0.83, 1.98) }, { "J10", (0.869, 1.364) }, { "I10", (0.97, 0.749) },
+            { "L11", (1.18, 2.59) }, { "K11", (1.31, 2.09) }, { "J11", (1.45, 1.64) }, { "I11", (1.61, 1.1) },
+            { "L12", (1.649, 2.663) }, { "K12", (1.839, 2.246) }, { "J12", (2.033, 1.847) }, { "I12", (2.2, 1.42) },
 
             // Third block
-            { "D8", (1.45, 1.85) }, { "C8", (1.25, 1.50) }, { "B8", (0.95, 1.15) }, { "A8", (0.67, 0.74) },
-            { "D7", (2.05, 1.50) }, { "C7", (1.70, 1.15) }, { "B7", (1.30, 0.80) }, { "A7", (0.93, 0.39) },
-            { "D6", (2.65, 1.15) }, { "C6", (2.15, 0.80) }, { "B6", (1.65, 0.43) }, { "A6", (1.20, 0.07) },
-            { "D5", (3.25, 0.80) }, { "C5", (2.60, 0.45) }, { "B5", (2.00, 0.00) }, { "A5", (1.46, -0.38) },
+            { "D8", (-2.296, 1.02) }, { "C8", (-2.559, 0.646) }, { "B8", (-2.81, 0.272) }, { "A8", (-3.086, -0.09) },
+            { "D7", (-1.657, 0.672) }, { "C7", (-2.084, 0.245) }, { "B7", (-2.45, -0.034) }, { "A7", (-2.824, -0.443) },
+            { "D6", (-1.122, 0.269) }, { "C6", (-1.59, -0.08) }, { "B6", (-2.086, -0.456) }, { "A6", (-2.571, -0.84) },
+            { "D5", (-0.548, -0.068) }, { "C5", (-1.07, -0.46) }, { "B5", (-1.717, -0.8) }, { "A5", (-2.293, -1.2) },
 
             // Fourth block
-            { "E9", (4.46, 0.80) }, { "F9", (5.05, 0.40) }, { "G9", (5.61, 0.00) }, { "H9", (6.19, -0.38) },
-            { "E10", (5.00, 1.15) }, { "F10", (5.50, 0.73) }, { "G10", (5.97, 0.39) }, { "H10", (6.48, -0.02) },
-            { "E11", (5.61, 1.50) }, { "F11", (6.00, 1.15) }, { "G11", (6.37, 0.73) }, { "H11", (6.73, 0.37) },
-            { "E12", (6.20, 1.85) }, { "F12", (6.50, 1.50) }, { "G12", (6.74, 1.13) }, { "H12", (7.00, 0.74) },
+            { "E9", (0.724, -0.094) }, { "F9", (1.285, -0.44) }, { "G9", (1.865, -0.833) }, { "H9", (2.418, -1.192) },
+            { "E10", (1.286, 0.3) }, { "F10", (1.752, -0.083) }, { "G10", (2.21, -0.46) }, { "H10", (2.653, -0.851) },
+            { "E11", (1.83, 0.66) }, { "F11", (2.21, 0.29) }, { "G11", (2.58, -0.08) }, { "H11", (2.93, -0.45) },
+            { "E12", (2.428, 1.033) }, { "F12", (2.73, 0.7) }, { "G12", (2.986, 0.273) }, { "H12", (3.22, -0.06) },
 
             // Fifth block
-            { "H1", (5.45, -2.02) }, { "G1", (4.97, -1.98) }, { "F1", (4.53, -1.95) }, { "E1", (4.05, -1.88) },
-            { "H2", (5.62, -1.62) }, { "G2", (5.09, -1.48) }, { "F2", (4.59, -1.36) }, { "E2", (4.06, -1.20) },
-            { "H3", (5.78, -1.21) }, { "G3", (5.23, -0.98) }, { "F3", (4.68, -0.76) }, { "E3", (4.10, -0.50) },
-            { "H4", (5.99, -0.75) }, { "G4", (5.36, -0.45) }, { "F4", (4.77, -0.13) }, { "E4", (4.13, 0.20) },
+            { "H1", (1.637, -2.865) }, { "G1", (1.164, -2.82) }, { "F1", (0.721, -2.797) }, { "E1", (0.292, -2.73) },
+            { "H2", (1.81, -2.44) }, { "G2", (1.34, -2.29) }, { "F2", (0.83, -2.14) }, { "E2", (0.3, -2.02) },
+            { "H3", (2.023, -2.034) }, { "G3", (1.432, -1.794) }, { "F3", (0.905, -1.556) }, { "E3", (0.33, -1.333) },
+            { "H4", (2.215, -1.603) }, { "G4", (1.6, -1.292) }, { "F4", (1, -0.965) }, { "E4", (0.37, -0.654) },
 
             // Sixth block
-            { "A4", (1.70, -0.77) }, { "B4", (2.32, -0.42) }, { "C4", (2.93, -0.13) }, { "D4", (3.50, 0.20) },
-            { "A3", (1.88, -1.23) }, { "B3", (2.45, -0.92) }, { "C3", (3.00, -0.67) }, { "D3", (3.56, -0.47) },
-            { "A2", (2.08, -1.58) }, { "B2", (2.57, -1.42) }, { "C2", (3.07, -1.34) }, { "D2", (3.60, -1.15) },
-            { "A1", (2.26, -1.99) }, { "B1", (2.70, -1.92) }, { "C1", (3.17, -1.90) }, { "D1", (3.63, -1.88) }
+            { "A4", (-2.066, -1.587) }, { "B4", (-1.403, -1.268) }, { "C4", (0.844, -0.957) }, { "D4", (-0.253, -0.654) },
+            { "A3", (-1.9, -2.016) }, { "B3", (-1.312, -1.782) }, { "C3", (-0.776, -1.6) }, { "D3", (-0.208, -1.325) },
+            { "A2", (-1.67, -2.45) }, { "B2", (-1.25, -2.35) }, { "C2", (-0.68, -2.2) }, { "D2", (-0.2, -2.04) },
+            { "A1", (-1.484, -2.884) }, { "B1", (-1.034, -2.812) }, { "C1", (-0.6, -2.797) }, { "D1", (-0.158, -2.726) }
         };
     }
 
-    // Belirtilen hücrenin pozisyonunu döndüren metod
+    // Belirtilen h crenin pozisyonunu d nd ren metod
     public Vector2 GetPosition(string cell)
     {
         if (positions.TryGetValue(cell, out var position))
@@ -70,11 +70,11 @@ public class Board : MonoBehaviour
             return new Vector2((float)position.x, (float)position.y);
         }
 
-        Debug.LogError("Geçersiz konum: " + cell);
+        Debug.LogError("Ge ersiz konum: " + cell);
         return Vector2.zero;
     }
 
-    // Belirtilen pozisyon için ilgili Field nesnesini döndüren metod
+    // Belirtilen pozisyon i in ilgili Field nesnesini d nd ren metod
     public Field GetField(string position)
     {
         if (fields.TryGetValue(position, out Field field))
@@ -85,7 +85,7 @@ public class Board : MonoBehaviour
         return null;
     }
 
-    // Tahtadaki tüm hücrelerin pozisyonlarýný konsola yazdýran metod
+    // Tahtadaki t m h crelerin pozisyonlar n  konsola yazd ran metod
     public void PrintBoard()
     {
         foreach (var kvp in positions)
@@ -94,7 +94,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    // Verilen oyuncunun þahýný bulan metod
+    // Verilen oyuncunun  ah n  bulan metod
     private Piece FindKing(int playerId)
     {
         foreach (Piece piece in pieces)
@@ -104,48 +104,48 @@ public class Board : MonoBehaviour
                 return piece;
             }
         }
-        return null; // Þah bulunamazsa null döndür
+        return null; //  ah bulunamazsa null d nd r
     }
 
-    // Hamle doðrulama nesnesi
+    // Hamle do rulama nesnesi
     private MoveValidator _validator;
 
-    // Board yapýcý metodu, MoveValidator'ý baþlatýr
+    // Board yap c  metodu, MoveValidator'  ba lat r
     public Board(Chessboard chessboard)
     {
         _validator = new MoveValidator(chessboard);
     }
 
-    // Verilen alanýn dolu olup olmadýðýný kontrol eden metod
+    // Verilen alan n dolu olup olmad   n  kontrol eden metod
     public bool IsOccupied(Field field)
     {
         return field.OccupiedPiece != null;
     }
 
-    // Verilen taþ ve hamle ile geçerli bir hamle olup olmadýðýný kontrol eder
+    // Verilen ta  ve hamle ile ge erli bir hamle olup olmad   n  kontrol eder
     public bool IsValidMove(Piece piece, Move move)
     {
         return _validator.IsValidMove(piece, move);
     }
 
-    // Þahýn tehdit altýnda olup olmadýðýný kontrol eder
+    //  ah n tehdit alt nda olup olmad   n  kontrol eder
     private bool IsKingInCheck(Piece king, Board board)
     {
         foreach (Piece piece in pieces)
         {
-            if (piece.PlayerId != king.PlayerId) // Düþman taþlarý kontrol et
+            if (piece.PlayerId != king.PlayerId) // D  man ta lar  kontrol et
             {
                 List<string> possibleMoves = piece.GetPossibleMoves(board);
                 if (possibleMoves.Contains(king.CurrentPosition))
                 {
-                    return true; // Þah tehdit altýnda
+                    return true; //  ah tehdit alt nda
                 }
             }
         }
-        return false; // Þah güvende
+        return false; //  ah g vende
     }
 
-    // Verilen oyuncunun hamlesi olup olmadýðýný kontrol eder
+    // Verilen oyuncunun hamlesi olup olmad   n  kontrol eder
     private bool HasValidMove(int playerId, Board board)
     {
         foreach (Piece piece in pieces)
@@ -155,20 +155,20 @@ public class Board : MonoBehaviour
                 List<string> possibleMoves = piece.GetPossibleMoves(board);
                 if (possibleMoves.Count > 0)
                 {
-                    return true; // En az bir hamle varsa mat deðil
+                    return true; // En az bir hamle varsa mat de il
                 }
             }
         }
-        return false; // Hiç hamle yoksa oyuncu mat
+        return false; // Hi  hamle yoksa oyuncu mat
     }
 
-    // Verilen oyuncu için mat durumunu kontrol eder
+    // Verilen oyuncu i in mat durumunu kontrol eder
     public bool IsCheckmate(int playerId, Board board)
     {
         Piece king = FindKing(playerId);
         if (king == null)
         {
-            Debug.Log("Player " + playerId + " þahýný kaybetti, elendi!");
+            Debug.Log("Player " + playerId + "  ah n  kaybetti, elendi!");
             return true;
         }
 
@@ -182,7 +182,7 @@ public class Board : MonoBehaviour
             return false;
         }
 
-        Debug.Log("Player " + playerId + " þah-mat oldu!");
+        Debug.Log("Player " + playerId + "  ah-mat oldu!");
         return true;
     }
 }

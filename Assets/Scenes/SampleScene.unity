@@ -451,7 +451,49 @@ MonoBehaviour:
   - {fileID: 3433235147802966498, guid: 7242e93313d6b4939b2c009426c74059, type: 3}
   - {fileID: 3433235147802966498, guid: ede2da7a2eb9d4b5cbc4ec3f3e7e454b, type: 3}
   - {fileID: 3433235147802966498, guid: bc59067c9ba6944df9693e06a932ac0e, type: 3}
-  pieceView: {fileID: 0}
+  whitePawnPrefabs:
+  - {fileID: 2139895194770424873, guid: 15c5c1b22afd54a50addc393f6256a9e, type: 3}
+  - {fileID: 1650811065236143576, guid: 75cae3ab0c5104d02b0ce2c7d999fec3, type: 3}
+  - {fileID: 1274624635836184684, guid: 7d931f5e2298242ceb6f4b5c75af951d, type: 3}
+  - {fileID: 8751744021972663769, guid: 79099e07be8da4c6b9aac17e5ac434c5, type: 3}
+  - {fileID: 2364865043084805882, guid: 8f6167c71db074243b240a4d6eacc85d, type: 3}
+  - {fileID: 1201267303712723668, guid: 4a6625141917a488b835e3024dad400f, type: 3}
+  - {fileID: 783820368253165270, guid: 754cef02a3b29420083e153e9eca0910, type: 3}
+  - {fileID: 2406374332424490933, guid: 3bdca82da915048bba8d71ec23e76362, type: 3}
+  grayPawnPrefabs:
+  - {fileID: 954597543209982695, guid: fd5802941ce8141b390dc5fc8a95ea8d, type: 3}
+  - {fileID: 7717168413118912680, guid: 2f6945dad78234341a17c3bf07957153, type: 3}
+  - {fileID: 1653668528804805356, guid: 836ad7c5a17eb4c7ca350c70cdf850b1, type: 3}
+  - {fileID: 1619978601614978890, guid: 3546ed201f0944727b4b38cd25e16507, type: 3}
+  - {fileID: 7166859745152517952, guid: 63990cfbbc1f14e10976508f72971df2, type: 3}
+  - {fileID: 8482719746934859867, guid: 80a047c753bf044008182424ff36339c, type: 3}
+  - {fileID: 532159799630150795, guid: 8be3b6a19b6664e5b98269d8bdd05db0, type: 3}
+  - {fileID: 8936170143260931094, guid: fb93d19f162a44341bc1ee17a9c4dc14, type: 3}
+  whitekingPrefab: {fileID: 3497303447587563788, guid: 91d419a2c464d4d038b3e68f75a5ce51, type: 3}
+  graykingPrefab: {fileID: 5954836518359528288, guid: 02fdf4ef8e20b455093912035112d161, type: 3}
+  blackkingPrefab: {fileID: 4327553494141356247, guid: 887e20728f80444d6884cd1adccccf02, type: 3}
+  whitequeenPrefab: {fileID: 1790955775997035902, guid: 2d51d3105e7884f9b976a327af868798, type: 3}
+  grayqueenPrefab: {fileID: 7261359412089321670, guid: 69dbc373a767a4a1293139fa85a708f1, type: 3}
+  blackqueenPrefab: {fileID: 3354576037234182521, guid: bdc5ee9e85f864d529d6e5907f420094, type: 3}
+  whiterookPrefab: {fileID: 7914902516237255409, guid: 40c955c9ac80e4414a76d3e9af1425ca, type: 3}
+  whiterookPrefab2: {fileID: 3751059525151584036, guid: 39e70ffe534e6453d923529d36278ef2, type: 3}
+  grayrookPrefab: {fileID: 2628744045225318525, guid: 5ef9ac394317b4bfbaab6036d8634bce, type: 3}
+  grayrookPrefab2: {fileID: 1352736041475599406, guid: 512730dbf0e00460ea24a9977e639e40, type: 3}
+  blackrookPrefab: {fileID: 2600928982594362587, guid: 3835a15dbca97476a94f3c9e32c0da0a, type: 3}
+  blackrookPrefab2: {fileID: 5645290663126631401, guid: 6403d008b3f674ea4a31fec33555fd99, type: 3}
+  whitebishopPrefab: {fileID: 4255780989847221410, guid: 5e09a6ea9fd164177a9b2af87b605059, type: 3}
+  whitebishopPrefab2: {fileID: 4742201299510710185, guid: 04f89977a3ae84e79a39440be587eafb, type: 3}
+  graybishopPrefab: {fileID: 74872005071418932, guid: 8907ec4f15f844c18be67e6bb1d43378, type: 3}
+  graybishopPrefab2: {fileID: 9126822294850331978, guid: 9e799de94c471466688196b40e486eee, type: 3}
+  blackbishopPrefab: {fileID: 1961294400342797956, guid: fd519063e43174b40aead2b9ee98cf2c, type: 3}
+  blackbishopPrefab2: {fileID: 714464361480227736, guid: 4d05b6ed44cf547eeb324b4498d503ea, type: 3}
+  whiteknightPrefab: {fileID: 3025152839499052285, guid: 91320869a468240b681e519d90688822, type: 3}
+  whiteknightPrefab2: {fileID: 625983675611178863, guid: 9135f590e39694a608cb416c61682d6c, type: 3}
+  grayknightPrefab: {fileID: 6002553878699275921, guid: fef83e19e6ab243c3aba3f324af34278, type: 3}
+  grayknightPrefab2: {fileID: 5802922543516374456, guid: a5c90df5f15134f6a8b4ef79eb07fb6a, type: 3}
+  blackknightPrefab: {fileID: 410102990215763927, guid: 05d162ccdb74a41d2b75b2ceec0693ae, type: 3}
+  blackknightPrefab2: {fileID: 98003442173435382, guid: 4a746b6f1a06747b2ac5561d5b36242c, type: 3}
+  whitePieces: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
