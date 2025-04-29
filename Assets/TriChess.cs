@@ -45,9 +45,9 @@ public class TriChess : MonoBehaviour
 
 
     // Lists to track all pieces
-    public List<ChessPiece> whitePieces = new List<ChessPiece>();
-    private List<ChessPiece> grayPieces = new List<ChessPiece>();
-    private List<ChessPiece> blackPieces = new List<ChessPiece>();
+    public List<Piece> whitePieces = new List<Piece>();
+    private List<Piece> grayPieces = new List<Piece>();
+    private List<Piece> blackPieces = new List<Piece>();
 
     void Start()
     {
@@ -92,7 +92,7 @@ public class TriChess : MonoBehaviour
         foreach (GameObject prefab in whitePawnPrefabs)
         {
             GameObject pawnObject = Instantiate(prefab);
-            ChessPiece pawn = pawnObject.GetComponent<ChessPiece>();
+            Piece pawn = pawnObject.GetComponent<Piece>();
             
             if (pawn != null)
             {
@@ -105,7 +105,7 @@ public class TriChess : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ChessPiece script is not attached to the prefab: {prefab.name}");
+                Debug.LogError($"Piece script is not attached to the prefab: {prefab.name}");
             }
         }
 
@@ -113,7 +113,7 @@ public class TriChess : MonoBehaviour
         foreach (GameObject prefab in grayPawnPrefabs)
         {
             GameObject pawnObject = Instantiate(prefab);
-            ChessPiece pawn = pawnObject.GetComponent<ChessPiece>();
+            Piece pawn = pawnObject.GetComponent<Piece>();
             
             if (pawn != null)
             {
@@ -126,7 +126,7 @@ public class TriChess : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ChessPiece script is not attached to the prefab: {prefab.name}");
+                Debug.LogError($"Piece script is not attached to the prefab: {prefab.name}");
             }
         }
         
@@ -134,7 +134,7 @@ public class TriChess : MonoBehaviour
         foreach (GameObject prefab in blackPawnPrefabs)
         {
             GameObject pawnObject = Instantiate(prefab);
-            ChessPiece pawn = pawnObject.GetComponent<ChessPiece>();
+            Piece pawn = pawnObject.GetComponent<Piece>();
             
             if (pawn != null)
             {
@@ -147,7 +147,7 @@ public class TriChess : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ChessPiece script is not attached to the prefab: {prefab.name}");
+                Debug.LogError($"Piece script is not attached to the prefab: {prefab.name}");
             }
         }
         
@@ -186,7 +186,7 @@ public class TriChess : MonoBehaviour
     }
     
     // Helper method to instantiate a piece and add it to the appropriate list
-    void InstantiatePiece(GameObject prefab, List<ChessPiece> piecesList, string pieceName)
+    void InstantiatePiece(GameObject prefab, List<Piece> piecesList, string pieceName)
     {
         if (prefab == null)
         {
@@ -195,7 +195,7 @@ public class TriChess : MonoBehaviour
         }
         
         GameObject pieceObject = Instantiate(prefab);
-        ChessPiece piece = pieceObject.GetComponent<ChessPiece>();
+        Piece piece = pieceObject.GetComponent<Piece>();
         
         if (piece != null)
         {
@@ -208,7 +208,7 @@ public class TriChess : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"ChessPiece script is not attached to the prefab: {prefab.name}");
+            Debug.LogError($"Piece script is not attached to the prefab: {prefab.name}");
         }
     }
 

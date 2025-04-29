@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5759972474872968833}
   - component: {fileID: 5016244258546960299}
-  - component: {fileID: 4780427967670172573}
+  - component: {fileID: 8071913043489452515}
   m_Layer: 0
   m_Name: BlackPawn1
   m_TagString: Untagged
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4780427967670172573
+--- !u!114 &8071913043489452515
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
