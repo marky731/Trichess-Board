@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Model.ChessboardMain.Pieces;
 
-public class TriChess : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
+    // Add these fields at the top with your other fields
+    [SerializeField] private Material highlightMaterial;  // Assign this in inspector
+    private Piece selectedPiece;
+    private Material originalMaterial;
+    
+    // Change the Instance property to return GameManager type
+    public static GameManager Instance { get; private set; }
+    
     // Keep your prefab declarations
     public GameObject boardPrefab;
     public List<GameObject> blackPawnPrefabs = new List<GameObject>();
@@ -48,6 +56,23 @@ public class TriChess : MonoBehaviour
     public List<Piece> whitePieces = new List<Piece>();
     private List<Piece> grayPieces = new List<Piece>();
     private List<Piece> blackPieces = new List<Piece>();
+
+    // Add CurrentPlayerId property to track the current player's turn
+    public int CurrentPlayerId { get; private set; } = 0; // Start with player 0 or set appropriate default
+
+    void Awake()
+    {
+        // Singleton pattern implementation
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -199,6 +224,9 @@ public class TriChess : MonoBehaviour
         
         if (piece != null)
         {
+            // Make sure GameObject reference is set
+            piece.GameObject = pieceObject;  // Add this line
+            
             piecesList.Add(piece);
             List<string> possibleMoves = piece.GetPossibleMoves(board);
             foreach (string move in possibleMoves)
@@ -288,6 +316,117 @@ public class TriChess : MonoBehaviour
     //     pieceView.SpawnPiece(PieceType.Pawn, "G11", PieceColor.Black);
     //     pieceView.SpawnPiece(PieceType.Pawn, "H11", PieceColor.Black);
     // }
+
+    // Called when a piece is clicked
+    public void SelectPiece(Piece piece)
+    {
+        if (piece == null)
+        {
+            Debug.LogError("Attempted to select a null piece");
+            return;
+        }
+
+        // If we already have a piece selected, unhighlight it
+        if (selectedPiece != null)
+        {
+            UnselectCurrentPiece();
+        }
+
+        // Select the new piece
+        selectedPiece = piece;
+        
+        // Check if the GameObject reference exists
+        if (piece.GameObject == null)
+        {
+            // Try to use the gameObject this component is attached to
+            piece.GameObject = piece.gameObject;
+            
+            if (piece.GameObject == null)
+            {
+                Debug.LogError("Piece's GameObject is null and cannot be determined!");
+                selectedPiece = null;
+                return;
+            }
+        }
+        
+        // First try Renderer for 3D objects
+        Renderer renderer = piece.GameObject.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            originalMaterial = renderer.material;
+            if (highlightMaterial != null)
+            {
+                renderer.material = highlightMaterial;
+            }
+            else
+            {
+                // Create a highlighted version of the original material
+                Material tempMaterial = new Material(originalMaterial);
+                tempMaterial.color = new Color(
+                    Mathf.Min(originalMaterial.color.r + 0.3f, 1f),
+                    Mathf.Min(originalMaterial.color.g + 0.3f, 1f),
+                    Mathf.Min(originalMaterial.color.b + 0.3f, 1f)
+                );
+                renderer.material = tempMaterial;
+            }
+        }
+        else
+        {
+            // Try SpriteRenderer for 2D objects
+            SpriteRenderer spriteRenderer = piece.GameObject.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                // For SpriteRenderer, just change the color
+                Color originalColor = spriteRenderer.color;
+                spriteRenderer.color = new Color(
+                    Mathf.Min(originalColor.r + 0.3f, 1f),
+                    Mathf.Min(originalColor.g + 0.3f, 1f),
+                    Mathf.Min(originalColor.b + 0.3f, 1f),
+                    originalColor.a
+                );
+            }
+            else
+            {
+                Debug.LogWarning("No Renderer or SpriteRenderer found on piece's GameObject");
+            }
+        }
+    }
+
+    public void UnselectCurrentPiece()
+    {
+        if (selectedPiece != null)
+        {
+            Renderer renderer = selectedPiece.GameObject.GetComponent<Renderer>();
+            if (renderer != null && originalMaterial != null)
+            {
+                renderer.material = originalMaterial;
+            }
+            else
+            {
+                // Try SpriteRenderer for 2D objects
+                SpriteRenderer spriteRenderer = selectedPiece.GameObject.GetComponent<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    // Reset to original color (you'll need to store original color)
+                    // For now, use white as a fallback
+                    spriteRenderer.color = Color.white;
+                }
+            }
+            selectedPiece = null;
+        }
+    }
+
+    // Check if a piece is the currently selected one
+    public bool IsPieceSelected(Piece piece)
+    {
+        return selectedPiece == piece;
+    }
+
+    // Get the currently selected piece
+    public Piece GetSelectedPiece()
+    {
+        return selectedPiece;
+    }
 }
 
 

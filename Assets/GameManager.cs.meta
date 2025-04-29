@@ -1,0 +1,37 @@
+fileFormatVersion: 2
+guid: f3da8788fd5f7f94a8df74a781309ff2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - highlightMaterial: {fileID: 2100000, guid: 9e1430f12c891402c9e6376da8be7823, type: 2}
+  - boardPrefab: {fileID: 6127853421019857553, guid: e1db9e906ee1f4ff3980579cd516bbad, type: 3}
+  - whitekingPrefab: {instanceID: 0}
+  - graykingPrefab: {instanceID: 0}
+  - blackkingPrefab: {instanceID: 0}
+  - whitequeenPrefab: {instanceID: 0}
+  - grayqueenPrefab: {instanceID: 0}
+  - blackqueenPrefab: {instanceID: 0}
+  - whiterookPrefab: {instanceID: 0}
+  - whiterookPrefab2: {instanceID: 0}
+  - grayrookPrefab: {instanceID: 0}
+  - grayrookPrefab2: {instanceID: 0}
+  - blackrookPrefab: {instanceID: 0}
+  - blackrookPrefab2: {instanceID: 0}
+  - whitebishopPrefab: {instanceID: 0}
+  - whitebishopPrefab2: {instanceID: 0}
+  - graybishopPrefab: {instanceID: 0}
+  - graybishopPrefab2: {instanceID: 0}
+  - blackbishopPrefab: {instanceID: 0}
+  - blackbishopPrefab2: {instanceID: 0}
+  - whiteknightPrefab: {instanceID: 0}
+  - whiteknightPrefab2: {instanceID: 0}
+  - grayknightPrefab: {instanceID: 0}
+  - grayknightPrefab2: {instanceID: 0}
+  - blackknightPrefab: {instanceID: 0}
+  - blackknightPrefab2: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
