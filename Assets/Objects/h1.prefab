@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -3391261205822358088}
   m_Layer: 0
   m_Name: h1
-  m_TagString: Untagged
+  m_TagString: Piecse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1777835428793600396, guid: 4ae5523775845424fbccb9113f7e472e, type: 3}
+  m_Sprite: {fileID: -369973914240441096, guid: 211c7cf143ce64055a575d2ea9fd8d7f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -141,7 +141,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.88, y: 3.28}
+    oldSize: {x: 12, y: 12}
     newSize: {x: 1.88, y: 3.28}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

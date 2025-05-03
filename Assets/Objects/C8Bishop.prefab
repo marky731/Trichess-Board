@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -1029824683419923308}
   m_Layer: 0
   m_Name: C8Bishop
-  m_TagString: Untagged
+  m_TagString: Piecse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

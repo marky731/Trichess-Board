@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7592999934577548129}
   m_Layer: 0
   m_Name: K8Knight
-  m_TagString: Untagged
+  m_TagString: Piecse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

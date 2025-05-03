@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3155269066960710301}
   m_Layer: 0
   m_Name: F12Bishop
-  m_TagString: Untagged
+  m_TagString: Piecse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

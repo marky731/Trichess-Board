@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -4465754836650990941}
   m_Layer: 0
   m_Name: WhitePawn6
-  m_TagString: Untagged
+  m_TagString: Piecse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -407,6 +407,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1526083613}
   - component: {fileID: 1526083614}
+  - component: {fileID: 1526083615}
   m_Layer: 0
   m_Name: Trichess
   m_TagString: Untagged
@@ -441,6 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3da8788fd5f7f94a8df74a781309ff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightMaterial: {fileID: 0}
   boardPrefab: {fileID: 6127853421019857553, guid: e1db9e906ee1f4ff3980579cd516bbad, type: 3}
   blackPawnPrefabs:
   - {fileID: 3433235147802966498, guid: d2d10f2fd81764de2830bb0f804a3899, type: 3}
@@ -494,6 +496,19 @@ MonoBehaviour:
   blackknightPrefab: {fileID: 410102990215763927, guid: 05d162ccdb74a41d2b75b2ceec0693ae, type: 3}
   blackknightPrefab2: {fileID: 98003442173435382, guid: 4a746b6f1a06747b2ac5561d5b36242c, type: 3}
   whitePieces: []
+--- !u!114 &1526083615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526083611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff6cbb58aaf9a4f7cb30c6fcaea13dbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightPrefab: {fileID: 9012590246348943801, guid: 6b3bcd7abbb4e487b8d2a62d578274cd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
