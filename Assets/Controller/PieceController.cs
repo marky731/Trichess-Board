@@ -25,17 +25,27 @@ public class PieceController : MonoBehaviour
     {
         if (piece != null)
         {
-            Debug.Log($"Clicked on piece: {piece.GetType().Name}");
+            Debug.Log($"Clicked on piece: {piece.GetType().Name} (Player {piece.PlayerId})");
             
-            // Tell the GameManager this piece was clicked
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.SelectPiece(piece);
-            }
-            else
+            // Check if GameManager exists
+            if (GameManager.Instance == null)
             {
                 Debug.LogError("GameManager.Instance is null!");
+                return;
             }
+            
+            // Check if it's this player's turn
+            int currentPlayerId = GameManager.Instance.CurrentPlayerId;
+            if (piece.PlayerId != currentPlayerId)
+            {
+                Debug.Log($"Not your turn! Current player: {currentPlayerId}, Piece belongs to player: {piece.PlayerId}");
+                return;
+            }
+            
+            Debug.Log($"Selected piece: {piece.GetType().Name} (Player {piece.PlayerId})");
+            
+            // Tell the GameManager this piece was clicked
+            GameManager.Instance.SelectPiece(piece);
         }
         else
         {

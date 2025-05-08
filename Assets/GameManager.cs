@@ -57,8 +57,24 @@ public class GameManager : MonoBehaviour
     private List<Piece> grayPieces = new List<Piece>();
     private List<Piece> blackPieces = new List<Piece>();
 
-    // Add CurrentPlayerId property to track the current player's turn
-    public int CurrentPlayerId { get; private set; } = 0; // Start with player 0 or set appropriate default
+    // Reference to the TurnManager
+    private Assets.Controller.TurnManager turnManager;
+    
+    // CurrentPlayerId property to track the current player's turn
+    public int CurrentPlayerId 
+    { 
+        get 
+        {
+            // If we have a TurnManager, use its currentPlayer value
+            if (turnManager != null)
+            {
+                return turnManager.currentPlayer;
+            }
+            
+            // Fallback to default value if TurnManager is not available
+            return 1; // Default to player 1
+        }
+    }
 
     void Awake()
     {
@@ -76,6 +92,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // Find the TurnManager
+        turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
+        if (turnManager == null)
+        {
+            Debug.LogWarning("TurnManager not found! Creating one...");
+            GameObject turnManagerObj = new GameObject("TurnManager");
+            turnManager = turnManagerObj.AddComponent<Assets.Controller.TurnManager>();
+        }
+        
+        Debug.Log($"Current player: {CurrentPlayerId}");
+        
         // Create board
         GameObject boardObject = Instantiate(boardPrefab);
         board = boardObject.GetComponent<Board>();
@@ -104,11 +131,38 @@ public class GameManager : MonoBehaviour
             
             // Initialize all pieces
             InitializePieces();
+            
+            // Set player IDs for all pieces
+            SetPiecePlayerIds();
         }
         else
         {
             Debug.LogError("Board prefab does not contain a Board component!");
         }
+    }
+    
+    // Set player IDs for all pieces
+    void SetPiecePlayerIds()
+    {
+        // White pieces belong to player 1
+        foreach (Piece piece in whitePieces)
+        {
+            piece.PlayerId = 1;
+        }
+        
+        // Gray pieces belong to player 2
+        foreach (Piece piece in grayPieces)
+        {
+            piece.PlayerId = 2;
+        }
+        
+        // Black pieces belong to player 3
+        foreach (Piece piece in blackPieces)
+        {
+            piece.PlayerId = 3;
+        }
+        
+        Debug.Log("Set player IDs for all pieces");
     }
 
     void InitializePieces()
@@ -428,6 +482,3 @@ public class GameManager : MonoBehaviour
         return selectedPiece;
     }
 }
-
-
-
