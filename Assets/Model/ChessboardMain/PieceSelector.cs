@@ -6,6 +6,17 @@ public class PieceSelector : MonoBehaviour
     private GameObject currentHighlight; // Aktif highlight objesi
     private const string m_TagString = "Piecse"; // Tag string constant
     
+    // Public method to remove the highlight
+    public void RemoveHighlight()
+    {
+        if (currentHighlight != null)
+        {
+            Debug.Log("Removing highlight due to turn change");
+            Destroy(currentHighlight);
+            currentHighlight = null;
+        }
+    }
+    
     void Start()
     {
         // Check if highlight prefab is assigned
@@ -42,7 +53,40 @@ public class PieceSelector : MonoBehaviour
 
                 if (hit.collider.CompareTag("Piece") || hit.collider.CompareTag("Piecse"))     
                 {
-                    Debug.Log("PIECE DETECTED - Creating highlight");
+                    Debug.Log("PIECE DETECTED");
+                    
+                    // Get the piece component
+                    Assets.Model.ChessboardMain.Pieces.Piece piece = hit.collider.GetComponent<Assets.Model.ChessboardMain.Pieces.Piece>();
+                    if (piece == null)
+                    {
+                        Debug.LogWarning("GameObject has Piece tag but no Piece component!");
+                        return;
+                    }
+                    
+                    // Check if it's this player's turn
+                    if (GameManager.Instance == null)
+                    {
+                        Debug.LogError("GameManager.Instance is null!");
+                        return;
+                    }
+                    
+                    int currentPlayerId = GameManager.Instance.CurrentPlayerId;
+                    if (piece.PlayerId != currentPlayerId)
+                    {
+                        Debug.Log($"Not this player's turn! Current player: {currentPlayerId}, Piece belongs to player: {piece.PlayerId}");
+                        
+                        // If there's a highlight and it's not the current player's turn, remove it
+                        if (currentHighlight != null)
+                        {
+                            Debug.Log("Destroying highlight for non-current player");
+                            Destroy(currentHighlight);
+                            currentHighlight = null;
+                        }
+                        
+                        return;
+                    }
+                    
+                    Debug.Log($"Creating highlight for current player's piece: {piece.GetType().Name} (Player {piece.PlayerId})");
                     
                     // Eski highlight varsa sil
                     if (currentHighlight != null)

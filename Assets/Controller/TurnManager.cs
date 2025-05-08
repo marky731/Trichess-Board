@@ -46,6 +46,40 @@ namespace Assets.Controller
             currentPlayer = nextPlayer;
             
             Debug.Log("Turn changed. Current player: Player " + currentPlayer);
+            
+            // Remove any highlights from the previous player's pieces
+            RemoveAllHighlights();
+        }
+        
+        // Remove all highlights in the scene
+        private void RemoveAllHighlights()
+        {
+            // Find all PieceSelector components
+            // Use the full namespace to avoid ambiguity
+            PieceSelector[] pieceSelectors = FindObjectsOfType<PieceSelector>();
+            if (pieceSelectors != null && pieceSelectors.Length > 0)
+            {
+                Debug.Log($"Found {pieceSelectors.Length} PieceSelector components");
+                foreach (PieceSelector selector in pieceSelectors)
+                {
+                    // Call a method to remove highlights
+                    selector.RemoveHighlight();
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No PieceSelector components found in the scene");
+            }
+            
+            // Also ensure GameManager unselects any selected piece
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.UnselectCurrentPiece();
+            }
+            else
+            {
+                Debug.LogError("GameManager.Instance is null in RemoveAllHighlights!");
+            }
         }
         
         // Set the current player directly (useful for testing or resetting)

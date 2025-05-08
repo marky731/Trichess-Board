@@ -11,6 +11,7 @@ The turn system allows three players to take turns moving their chess pieces. Th
 3. **PieceController**: Only allows the current player to select their pieces
 4. **BoardClickHandler**: Moves pieces and advances to the next player's turn
 5. **TurnIndicator**: Displays whose turn it is in the UI
+6. **PieceSelector**: Manages piece highlighting based on the current player
 
 ## How It Works
 
@@ -27,6 +28,15 @@ The turn system allows three players to take turns moving their chess pieces. Th
 - Player 2 controls the gray pieces
 - Player 3 controls the black pieces
 
+### Highlight Management
+
+The system ensures that only the current player's pieces can be highlighted:
+
+1. When a player clicks on a piece, the system checks if it belongs to the current player
+2. Only pieces belonging to the current player can be highlighted
+3. When the turn changes, the TurnManager automatically removes all highlights
+4. This ensures that highlight circles only appear for the current player's pieces
+
 ## Component Details
 
 ### TurnManager
@@ -35,12 +45,14 @@ The turn system allows three players to take turns moving their chess pieces. Th
 - Provides the `NextTurn()` method to advance to the next player
 - Triggers the `OnTurnChanged` event when the turn changes
 - Provides the `currentPlayer` property to get the current player ID
+- Removes all highlights when the turn changes
 
 ### GameManager
 
 - Gets the current player from the TurnManager
 - Provides the `CurrentPlayerId` property for other components
 - Sets the player IDs for all pieces during initialization
+- Handles piece selection and highlighting
 
 ### PieceController
 
@@ -60,6 +72,12 @@ The turn system allows three players to take turns moving their chess pieces. Th
 - Updates the display when the turn changes
 - Changes color based on the current player (white, gray, or black)
 
+### PieceSelector
+
+- Manages the highlight circle for selected pieces
+- Only creates highlights for the current player's pieces
+- Removes highlights when the turn changes
+
 ## Setting Up the Turn Indicator UI
 
 1. In the Unity Editor, go to the menu: Trichess > Create Turn Indicator
@@ -72,3 +90,15 @@ The turn system allows three players to take turns moving their chess pieces. Th
 - The TurnManager is created automatically if it doesn't exist
 - Player IDs are assigned to pieces during initialization
 - The UI updates automatically when the turn changes
+- Highlights are automatically removed when the turn changes
+- Any highlighted piece is automatically unhighlighted when the turn changes
+- Only the current player's pieces can be highlighted at any time
+
+## Highlight Management
+
+The system ensures that only the current player's pieces can be highlighted:
+
+1. The PieceController checks if it's the current player's turn before allowing piece selection
+2. The GameManager subscribes to the TurnManager's OnTurnChanged event
+3. When the turn changes, the GameManager automatically unselects any currently selected piece
+4. This ensures that highlight circles only appear for the current player's pieces
