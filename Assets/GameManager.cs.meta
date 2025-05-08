@@ -30,7 +30,7 @@ MonoImporter:
   - grayknightPrefab2: {instanceID: 0}
   - blackknightPrefab: {instanceID: 0}
   - blackknightPrefab2: {instanceID: 0}
-  executionOrder: 0
+  executionOrder: -100
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 
