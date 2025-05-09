@@ -175,12 +175,31 @@ public class GameManager : MonoBehaviour
             
             if (pawn != null)
             {
-                whitePieces.Add(pawn);
-                List<string> possibleMoves = pawn.GetPossibleMoves(board);
-                foreach (string move in possibleMoves)
+                // Make sure GameObject reference is set
+                pawn.GameObject = pawnObject;
+                
+                // Initialize the piece's position based on its GameObject position
+                string initialPosition = FindClosestBoardPosition(board, pawnObject.transform.position, 5.0f);
+                if (initialPosition != null)
                 {
-                    Debug.Log($"Possible move for White Pawn: {move}");
+                    pawn.position = initialPosition;
+                    Debug.Log($"Initialized White Pawn position to: {initialPosition}");
                 }
+                else
+                {
+                    Debug.LogWarning($"Could not determine initial position for White Pawn at {pawnObject.transform.position}");
+                }
+                
+                // Add PieceController component if it doesn't exist
+                if (pawnObject.GetComponent<PieceController>() == null)
+                {
+                    pawnObject.AddComponent<PieceController>();
+                    Debug.Log("Added PieceController to White Pawn");
+                }
+                
+                whitePieces.Add(pawn);
+                
+                // Don't call GetPossibleMoves here - defer until after all pieces are initialized
             }
             else
             {
@@ -196,12 +215,31 @@ public class GameManager : MonoBehaviour
             
             if (pawn != null)
             {
-                grayPieces.Add(pawn);
-                List<string> possibleMoves = pawn.GetPossibleMoves(board);
-                foreach (string move in possibleMoves)
+                // Make sure GameObject reference is set
+                pawn.GameObject = pawnObject;
+                
+                // Initialize the piece's position based on its GameObject position
+                string initialPosition = FindClosestBoardPosition(board, pawnObject.transform.position, 5.0f);
+                if (initialPosition != null)
                 {
-                    Debug.Log($"Possible move for Gray Pawn: {move}");
+                    pawn.position = initialPosition;
+                    Debug.Log($"Initialized Gray Pawn position to: {initialPosition}");
                 }
+                else
+                {
+                    Debug.LogWarning($"Could not determine initial position for Gray Pawn at {pawnObject.transform.position}");
+                }
+                
+                // Add PieceController component if it doesn't exist
+                if (pawnObject.GetComponent<PieceController>() == null)
+                {
+                    pawnObject.AddComponent<PieceController>();
+                    Debug.Log("Added PieceController to Gray Pawn");
+                }
+                
+                grayPieces.Add(pawn);
+                
+                // Don't call GetPossibleMoves here - defer until after all pieces are initialized
             }
             else
             {
@@ -217,12 +255,31 @@ public class GameManager : MonoBehaviour
             
             if (pawn != null)
             {
-                blackPieces.Add(pawn);
-                List<string> possibleMoves = pawn.GetPossibleMoves(board);
-                foreach (string move in possibleMoves)
+                // Make sure GameObject reference is set
+                pawn.GameObject = pawnObject;
+                
+                // Initialize the piece's position based on its GameObject position
+                string initialPosition = FindClosestBoardPosition(board, pawnObject.transform.position, 5.0f);
+                if (initialPosition != null)
                 {
-                    Debug.Log($"Possible move for Black Pawn: {move}");
+                    pawn.position = initialPosition;
+                    Debug.Log($"Initialized Black Pawn position to: {initialPosition}");
                 }
+                else
+                {
+                    Debug.LogWarning($"Could not determine initial position for Black Pawn at {pawnObject.transform.position}");
+                }
+                
+                // Add PieceController component if it doesn't exist
+                if (pawnObject.GetComponent<PieceController>() == null)
+                {
+                    pawnObject.AddComponent<PieceController>();
+                    Debug.Log("Added PieceController to Black Pawn");
+                }
+                
+                blackPieces.Add(pawn);
+                
+                // Don't call GetPossibleMoves here - defer until after all pieces are initialized
             }
             else
             {
@@ -262,6 +319,75 @@ public class GameManager : MonoBehaviour
         
         // Place pieces on board positions
         // SetupPlayers();
+        
+        // Schedule calculation of possible moves after a delay to ensure validator is initialized
+        Invoke("CalculatePossibleMovesForAllPieces", 1.0f);
+    }
+    
+    // Calculate possible moves for all pieces after initialization
+    void CalculatePossibleMovesForAllPieces()
+    {
+        Debug.Log("Calculating possible moves for all pieces...");
+        
+        // Make sure the board and validator are initialized
+        if (board == null)
+        {
+            Debug.LogError("Board is null in CalculatePossibleMovesForAllPieces!");
+            return;
+        }
+        
+        // Calculate possible moves for white pieces
+        foreach (Piece piece in whitePieces)
+        {
+            if (piece != null && !string.IsNullOrEmpty(piece.position))
+            {
+                try
+                {
+                    List<string> possibleMoves = piece.GetPossibleMoves(board);
+                    Debug.Log($"Possible moves for {piece.GetType().Name} at {piece.position}: {possibleMoves.Count}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error calculating possible moves for {piece.GetType().Name}: {e.Message}");
+                }
+            }
+        }
+        
+        // Calculate possible moves for gray pieces
+        foreach (Piece piece in grayPieces)
+        {
+            if (piece != null && !string.IsNullOrEmpty(piece.position))
+            {
+                try
+                {
+                    List<string> possibleMoves = piece.GetPossibleMoves(board);
+                    Debug.Log($"Possible moves for {piece.GetType().Name} at {piece.position}: {possibleMoves.Count}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error calculating possible moves for {piece.GetType().Name}: {e.Message}");
+                }
+            }
+        }
+        
+        // Calculate possible moves for black pieces
+        foreach (Piece piece in blackPieces)
+        {
+            if (piece != null && !string.IsNullOrEmpty(piece.position))
+            {
+                try
+                {
+                    List<string> possibleMoves = piece.GetPossibleMoves(board);
+                    Debug.Log($"Possible moves for {piece.GetType().Name} at {piece.position}: {possibleMoves.Count}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Error calculating possible moves for {piece.GetType().Name}: {e.Message}");
+                }
+            }
+        }
+        
+        Debug.Log("Finished calculating possible moves for all pieces");
     }
     
     // Helper method to instantiate a piece and add it to the appropriate list
@@ -279,14 +405,31 @@ public class GameManager : MonoBehaviour
         if (piece != null)
         {
             // Make sure GameObject reference is set
-            piece.GameObject = pieceObject;  // Add this line
+            piece.GameObject = pieceObject;
+            
+            // Initialize the piece's position based on its GameObject position
+            string initialPosition = FindClosestBoardPosition(board, pieceObject.transform.position, 5.0f);
+            if (initialPosition != null)
+            {
+                piece.position = initialPosition;
+                Debug.Log($"Initialized {pieceName} position to: {initialPosition}");
+            }
+            else
+            {
+                Debug.LogWarning($"Could not determine initial position for {pieceName}");
+            }
+            
+            // Add PieceController component if it doesn't exist
+            if (pieceObject.GetComponent<PieceController>() == null)
+            {
+                pieceObject.AddComponent<PieceController>();
+                Debug.Log($"Added PieceController to {pieceName}");
+            }
             
             piecesList.Add(piece);
-            List<string> possibleMoves = piece.GetPossibleMoves(board);
-            foreach (string move in possibleMoves)
-            {
-                Debug.Log($"Possible move for {pieceName}: {move}");
-            }
+            
+            // Don't call GetPossibleMoves here to avoid validation errors during initialization
+            // We'll defer this until after all pieces are initialized and the validator is ready
         }
         else
         {
@@ -480,5 +623,53 @@ public class GameManager : MonoBehaviour
     public Piece GetSelectedPiece()
     {
         return selectedPiece;
+    }
+    
+    // Helper method to find the closest board position to a world position
+    private string FindClosestBoardPosition(Board board, Vector3 worldPosition, float threshold = 2.0f)
+    {
+        if (board == null)
+        {
+            Debug.LogError("Board is null in FindClosestBoardPosition!");
+            return null;
+        }
+        
+        // Get all board positions
+        var positions = board.GetAllPositions();
+        
+        if (positions == null || positions.Count == 0)
+        {
+            Debug.LogError("No board positions available");
+            return null;
+        }
+        
+        string closestPosition = null;
+        float closestDistance = float.MaxValue;
+        
+        // Find the closest position
+        foreach (var position in positions)
+        {
+            Vector2 positionVector = board.GetPosition(position);
+            float distance = Vector2.Distance(new Vector2(worldPosition.x, worldPosition.y), positionVector);
+            
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPosition = position;
+            }
+        }
+        
+        // Only return if the closest position is within the specified threshold
+        if (closestDistance <= threshold)
+        {
+            Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+            return closestPosition;
+        }
+        
+        Debug.Log($"No position found within threshold {threshold}. Closest was {closestPosition} at distance {closestDistance}");
+        
+        // If no position is within the threshold, return the closest one anyway
+        // This ensures we always get a position, even if it's not ideal
+        return closestPosition;
     }
 }

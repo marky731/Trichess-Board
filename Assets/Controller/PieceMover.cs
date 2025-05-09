@@ -76,8 +76,34 @@ namespace Assets.Controller
             Field sourceField = null;
             try
             {
+                // If piece.position is null or empty, try to find the current position
+                if (string.IsNullOrEmpty(piece.position))
+                {
+                    Debug.LogWarning("Piece position is null or empty. Trying to determine current position...");
+                    
+                    // Find the current position based on the GameObject's transform
+                    string currentPosition = FindClosestBoardPosition(board, piece.GameObject.transform.position);
+                    if (currentPosition != null)
+                    {
+                        // Update the piece's position property
+                        piece.position = currentPosition;
+                        Debug.Log($"Updated piece position to: {currentPosition}");
+                    }
+                    else
+                    {
+                        Debug.LogError("Could not determine the current position of the piece!");
+                        return;
+                    }
+                }
+                
                 sourceField = board.GetField(piece.position);
                 Debug.Log($"Source field: {(sourceField != null ? piece.position : "null")}");
+                
+                if (sourceField == null)
+                {
+                    Debug.LogError($"Source field is null for position: {piece.position}");
+                    return;
+                }
             }
             catch (Exception e)
             {
@@ -91,17 +117,16 @@ namespace Assets.Controller
             {
                 targetField = board.GetField(targetPosition);
                 Debug.Log($"Target field: {(targetField != null ? targetPosition : "null")}");
+                
+                if (targetField == null)
+                {
+                    Debug.LogError($"Target field is null for position: {targetPosition}");
+                    return;
+                }
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error getting target field: {e.Message}");
-                return;
-            }
-
-            // Eğer kaynak veya hedef alan geçersizse hata mesajı verir
-            if (sourceField == null || targetField == null)
-            {
-                Debug.LogError("Kaynak veya hedef alan geçersiz!");
                 return;
             }
 
@@ -134,27 +159,62 @@ namespace Assets.Controller
             }
 
             // 5. Hamlenin geçerli olup olmadığı MoveValidator ile kontrol edilir
-            // Temporarily skip move validation for testing
-            bool skipValidation = true; // Set to false once movement works
+            // Enable move validation for proper chess rules
+            bool skipValidation = false; // Validation is now enabled
             if (moveValidator != null && !skipValidation)
             {
                 try
                 {
+                    Debug.Log($"Validating move from {piece.position} to {targetPosition}...");
                     if (!moveValidator.IsValidMove(piece, move))
                     {
-                        Debug.LogError("Geçersiz hamle!");
-                        return;
+                        Debug.LogError($"Invalid move from {piece.position} to {targetPosition}! The move does not comply with chess rules.");
+                        
+                        // Prevent invalid moves
+                        return; // This line is now uncommented to prevent invalid moves
+                    }
+                    else
+                    {
+                        Debug.Log($"Move from {piece.position} to {targetPosition} is valid.");
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Error validating move: {e.Message}");
-                    // Continue anyway for testing
+                    Debug.LogError($"Error validating move: {e.Message}\n{e.StackTrace}");
+                    Debug.LogWarning("Cannot validate move due to an error. Preventing the move for safety.");
+                    return; // Prevent the move when there's an error in validation
                 }
             }
-            else if (moveValidator == null)
+            else
             {
-                Debug.LogWarning("MoveValidator is null, skipping validation");
+                if (moveValidator == null)
+                {
+                    Debug.LogWarning("MoveValidator is null! Trying to find it...");
+                    moveValidator = FindFirstObjectByType<MoveValidator>();
+                    
+                    if (moveValidator == null)
+                    {
+                        Debug.LogError("Could not find MoveValidator component! Creating one...");
+                        GameObject validatorObj = new GameObject("MoveValidator");
+                        moveValidator = validatorObj.AddComponent<MoveValidator>();
+                        
+                        // Try to initialize the MoveValidator
+                        Board boardComponent = FindFirstObjectByType<Board>();
+                        if (boardComponent != null)
+                        {
+                            Debug.Log("Found Board component. Waiting for it to initialize MoveValidator...");
+                        }
+                        else
+                        {
+                            Debug.LogError("Could not find Board component! Move validation will not work properly.");
+                        }
+                    }
+                }
+                
+                if (skipValidation)
+                {
+                    Debug.LogWarning("Validation is skipped. This should be enabled in production.");
+                }
             }
 
             // 6. Taşı yeni konumuna taşır, GameObject'inin pozisyonunu günceller
@@ -209,6 +269,46 @@ namespace Assets.Controller
             }
             
             Debug.Log("MovePiece completed successfully");
+        }
+        
+        // Helper method to find the closest board position to a world position
+        private string FindClosestBoardPosition(Board board, Vector3 worldPosition)
+        {
+            // Get all board positions
+            var positions = board.GetAllPositions();
+            
+            if (positions == null || positions.Count == 0)
+            {
+                Debug.LogError("No board positions available");
+                return null;
+            }
+            
+            string closestPosition = null;
+            float closestDistance = float.MaxValue;
+            
+            // Find the closest position
+            foreach (var position in positions)
+            {
+                Vector2 positionVector = board.GetPosition(position);
+                float distance = Vector2.Distance(new Vector2(worldPosition.x, worldPosition.y), positionVector);
+                
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPosition = position;
+                }
+            }
+            
+            // Only return if the closest position is within a reasonable distance
+            if (closestDistance <= 2.0f)
+            {
+                Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+                return closestPosition;
+            }
+            
+            Debug.Log($"No position found within threshold. Closest was {closestPosition} at distance {closestDistance}");
+            
+            return null;
         }
     }
 }

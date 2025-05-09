@@ -11,15 +11,13 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
     {
         private static readonly HashSet<Direction> DIRECTIONS = new HashSet<Direction>
         {
-            new Direction(1, 0),
-            new Direction(1, 1)
+            Direction.WhiteForward // Use the predefined direction for white pawns
         };
 
         private static readonly HashSet<Direction> TAKING_DIRECTIONS = new HashSet<Direction>
         {
-            new Direction(1, -1),
-            new Direction(2, 1),
-            new Direction(1, 2)
+            Direction.WhiteForwardRight, // Diagonal right for capturing
+            Direction.WhiteForwardLeft   // Diagonal left for capturing
         };
 
         public WhitePawn(GameObject gameObject, int playerId)
@@ -52,7 +50,7 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
                     if (nextField == null || !board.IsValidMove(this, new Move(currentField, this, nextField, nextField.OccupiedPiece)))
                         break;
 
-                    possibleMoves.Add(nextField.Position);
+                    possibleMoves.Add($"{nextField.X},{nextField.Y}");
 
                     if (board.IsOccupied(nextField))
                         break;

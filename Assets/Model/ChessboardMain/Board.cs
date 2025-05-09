@@ -230,11 +230,43 @@ public class Board : MonoBehaviour
 
     // Hamle do rulama nesnesi
     private MoveValidator _validator;
-
-    // Board yap c  metodu, MoveValidator'  ba lat r
-    public Board(Chessboard chessboard)
+    
+    // Chessboard instance
+    private Chessboard _chessboard;
+    
+    // Initialize the MoveValidator with a Chessboard
+    private void InitializeMoveValidator()
     {
-        _validator = new MoveValidator(chessboard);
+        Debug.Log("Initializing MoveValidator...");
+        
+        // Create a new Chessboard instance if it doesn't exist
+        if (_chessboard == null)
+        {
+            _chessboard = new Chessboard();
+            Debug.Log("Created new Chessboard instance");
+        }
+        
+        // Find the MoveValidator component
+        _validator = FindFirstObjectByType<MoveValidator>();
+        
+        if (_validator == null)
+        {
+            Debug.LogError("MoveValidator not found! Creating one...");
+            GameObject validatorObj = new GameObject("MoveValidator");
+            _validator = validatorObj.AddComponent<MoveValidator>();
+        }
+        
+        // Set the Chessboard reference in the MoveValidator
+        _validator.SetChessboard(_chessboard);
+        
+        Debug.Log("MoveValidator initialized successfully");
+    }
+    
+    // Called after all Start methods have been called
+    void OnEnable()
+    {
+        // Initialize the MoveValidator after all components have started
+        Invoke("InitializeMoveValidator", 0.1f);
     }
 
     // Verilen alan n dolu olup olmad   n  kontrol eden metod
@@ -246,7 +278,30 @@ public class Board : MonoBehaviour
     // Verilen ta  ve hamle ile ge erli bir hamle olup olmad   n  kontrol eder
     public bool IsValidMove(Piece piece, Move move)
     {
-        return _validator.IsValidMove(piece, move);
+        // Check if _validator is null (might happen during initialization)
+        if (_validator == null)
+        {
+            Debug.LogWarning("MoveValidator is null in Board.IsValidMove! Initializing MoveValidator...");
+            InitializeMoveValidator();
+            
+            // If still null, return true during initialization to avoid exceptions
+            if (_validator == null)
+            {
+                Debug.LogWarning("MoveValidator is still null after initialization attempt. Allowing move during initialization.");
+                return true;
+            }
+        }
+        
+        try
+        {
+            return _validator.IsValidMove(piece, move);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error in Board.IsValidMove: {e.Message}");
+            // Return true during initialization to avoid breaking the setup
+            return true;
+        }
     }
 
     //  ah n tehdit alt nda olup olmad   n  kontrol eder

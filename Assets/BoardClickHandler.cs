@@ -81,8 +81,19 @@ public class BoardClickHandler : MonoBehaviour
             {
                 Debug.Log($"Moving piece {selectedPiece.GetType().Name} to {targetPosition}");
                 
+                // Find the current position of the piece based on its GameObject position
+                string currentPosition = FindClosestBoardPosition(selectedPiece.GameObject.transform.position);
+                if (currentPosition == null)
+                {
+                    Debug.LogError("Could not determine the current position of the piece!");
+                    return;
+                }
+                
                 // Update the piece's position property
-                selectedPiece.position = targetPosition;
+                selectedPiece.position = currentPosition;
+                
+                Debug.Log($"Determined piece's current position: {currentPosition}");
+                Debug.Log($"Moving piece {selectedPiece.GetType().Name} from {currentPosition} to {targetPosition}");
                 
                 // Check if pieceMover is not null
                 if (pieceMover == null)

@@ -24,45 +24,108 @@ namespace Assets.Controller
         // Tahtayı temsil eden değişken
         private Chessboard _chessboard;
 
-        // MoveValidator sınıfı, geçerli hamlelerin kontrolünü sağlamak için Chessboard objesini alır
-        public MoveValidator(Chessboard chessboard)
+        // Awake is called when the script instance is being loaded
+        void Awake()
+        {
+            Debug.Log("MoveValidator Awake called.");
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            Debug.Log("MoveValidator Start called.");
+            
+            // Check if _chessboard is null
+            if (_chessboard == null)
+            {
+                Debug.LogWarning("Chessboard is null in MoveValidator. Move validation will not work properly.");
+            }
+        }
+
+        // Set the Chessboard reference after instantiation
+        public void SetChessboard(Chessboard chessboard)
         {
             _chessboard = chessboard ?? throw new ArgumentNullException(nameof(chessboard));
+            Debug.Log("Chessboard set in MoveValidator.");
         }
 
         // Hamlenin geçerli olup olmadığını kontrol eder
         public bool IsValidMove(Piece piece, Move move)
         {
+            // Check if Chessboard is initialized
+            if (_chessboard == null)
+            {
+                Debug.LogError("Chessboard is null in MoveValidator.IsValidMove! Move validation will fail.");
+                return false; // Return false to prevent the move when Chessboard is null
+            }
+
             // Eğer hamlede kaynak ya da hedef boşsa geçersiz say
             if (move == null || move.Source == null || move.Destination == null)
+            {
+                Debug.LogWarning("Move, Source, or Destination is null in IsValidMove!");
                 return false;
+            }
 
             // Eğer taş geçersizse (null) hamleyi geçersiz say
             if (piece == null)
+            {
+                Debug.LogWarning("Piece is null in IsValidMove!");
                 return false;
+            }
 
-            // Taşın hareket kurallarına uygun olup olmadığını kontrol et
-            if (!IsMoveAllowedByPiece(piece, move.Source, move.Destination))
-                return false;
+            try
+            {
+                // Check if the piece is trying to move to its current position
+                if (Math.Abs(move.Source.X - move.Destination.X) < 0.01 && Math.Abs(move.Source.Y - move.Destination.Y) < 0.01)
+                {
+                    Debug.Log($"Piece is trying to move to its current position ({move.Source.X}, {move.Source.Y}). This is not a valid move.");
+                    return false;
+                }
+                
+                // Taşın hareket kurallarına uygun olup olmadığını kontrol et
+                if (!IsMoveAllowedByPiece(piece, move.Source, move.Destination))
+                {
+                    Debug.Log($"Move from {move.Source.Position} to {move.Destination.Position} is not allowed by piece {piece.GetType().Name}");
+                    return false;
+                }
 
-            // Yolun açık olup olmadığını kontrol et (Vezir, Fil, Kale için)
-            if (!IsPathClear(move.Source, move.Destination))
-                return false;
+                // Yolun açık olup olmadığını kontrol et (Vezir, Fil, Kale için)
+                if (!IsPathClear(move.Source, move.Destination))
+                {
+                    Debug.Log($"Path from {move.Source.Position} to {move.Destination.Position} is not clear");
+                    return false;
+                }
 
-            // Hamlenin tahtanın sınırları içinde olup olmadığını kontrol et
-            if (!IsMoveWithinBounds(move))
-                return false;
+                // Hamlenin tahtanın sınırları içinde olup olmadığını kontrol et
+                if (!IsMoveWithinBounds(move))
+                {
+                    Debug.Log($"Move to {move.Destination.Position} is not within bounds");
+                    return false;
+                }
 
-            // Oyuncunun kendi taşını hareket ettirdiğinden emin ol
-            if (!IsPlayerMovingOwnPiece(move))
-                return false;
+                // Oyuncunun kendi taşını hareket ettirdiğinden emin ol
+                if (!IsPlayerMovingOwnPiece(move))
+                {
+                    Debug.Log($"Player is not moving their own piece. Piece color: {move.MovedPiece.GetColor()}, Current player: {_chessboard.CurrentPlayerColor}");
+                    return false;
+                }
 
-            // Eğer özel kurallar uygulanıyorsa burada kontrol et (Örneğin: Şah tehdit altında mı)
-            if (IsKingInCheckAfterMove(move))
-                return false;
+                // Eğer özel kurallar uygulanıyorsa burada kontrol et (Örneğin: Şah tehdit altında mı)
+                if (IsKingInCheckAfterMove(move))
+                {
+                    Debug.Log("King would be in check after this move");
+                    return false;
+                }
 
-            // Eğer yukarıdaki kontrollerin hepsi geçerli ise hamle geçerli sayılır
-            return true;
+                // Eğer yukarıdaki kontrollerin hepsi geçerli ise hamle geçerli sayılır
+                Debug.Log($"Move from {move.Source.Position} to {move.Destination.Position} is valid");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error in IsValidMove: {e.Message}\n{e.StackTrace}");
+                return false; // Return false to prevent the move when there's an error
+            }
         }
 
         // Taşın hareket kurallarına uygun olup olmadığını kontrol eder

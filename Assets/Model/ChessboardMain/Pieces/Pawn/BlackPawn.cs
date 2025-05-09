@@ -12,16 +12,14 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
         // Siyah piyonun düz hareket yönlerini belirler (Bir kare ileri)
         private static readonly HashSet<Direction> DIRECTIONS = new HashSet<Direction>
         {
-            new Direction(-1, 0),  // Bir kare geriye
-            new Direction(0, 1)    // Bir kare sağa
+            Direction.BlackForward // Use the predefined direction for black pawns
         };
 
         // Siyah piyonun çapraz alma yönlerini belirler (Diagonalde taş alma)
         private static readonly HashSet<Direction> TAKING_DIRECTIONS = new HashSet<Direction>
         {
-            new Direction(-1, 1),  // Çapraz sağ üst
-            new Direction(-2, -1), // Çapraz sol alt
-            new Direction(1, 2)    // Çapraz sağ alt
+            Direction.BlackForwardRight, // Diagonal right for capturing
+            Direction.BlackForwardLeft   // Diagonal left for capturing
         };
 
         // Eksik `gameObject` ve `playerId` parametreleri eklendi
@@ -61,7 +59,7 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
                     continue;
 
                 // Geçerli bir hamle bulunursa, hedef pozisyonu listeye ekle
-                possibleMoves.Add(nextField.Position);
+                possibleMoves.Add($"{nextField.X},{nextField.Y}");
 
                 // Debug.log ile her geçerli hamleyi yazdır
                 Debug.Log($"Black Pawn can move to {nextField.Position}");
@@ -78,8 +76,8 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
                 // Eğer hedef alanda rakip taş varsa, taş alınabilir
                 if (nextField.OccupiedPiece != null && nextField.OccupiedPiece.GetColor() != this.GetColor())
                 {
-                    possibleMoves.Add(nextField.Position);
-                    Debug.Log($"Black Pawn can attack enemy piece at {nextField.Position}");
+                    possibleMoves.Add($"{nextField.X},{nextField.Y}");
+                    Debug.Log($"Black Pawn can attack enemy piece at {nextField.X},{nextField.Y}");
                 }
             }
 

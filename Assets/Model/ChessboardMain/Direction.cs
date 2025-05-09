@@ -59,13 +59,52 @@ namespace Assets.Model.ChessboardMain
             double dx = destination.X - source.X;
             double dy = destination.Y - source.Y;
 
-            foreach (var dir in GetAllDirections())
+            // Check if the piece is trying to move to its current position
+            if (Math.Abs(dx) < 0.01 && Math.Abs(dy) < 0.01)
             {
-                if (dir.X == dx && dir.Y == dy)
-                    return dir;
+                // Return a special "no movement" direction
+                return new Direction(0, 0);
             }
 
-            throw new ArgumentException("Invalid move direction.");
+            // Normalize the direction for longer moves
+            double length = Math.Sqrt(dx * dx + dy * dy);
+            if (length > 1.5) // If it's more than a single step
+            {
+                // Try to find the closest standard direction
+                double bestMatch = double.MaxValue;
+                Direction bestDir = null;
+
+                foreach (var dir in GetAllDirections())
+                {
+                    // Calculate the angle between the actual direction and this standard direction
+                    double dotProduct = dx * dir.X + dy * dir.Y;
+                    double dirLength = Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y);
+                    double angleDiff = Math.Abs(dotProduct / (length * dirLength) - 1.0);
+                    
+                    if (angleDiff < bestMatch)
+                    {
+                        bestMatch = angleDiff;
+                        bestDir = dir;
+                    }
+                }
+
+                if (bestDir != null && bestMatch < 0.3) // If we found a reasonably close match
+                {
+                    return bestDir;
+                }
+            }
+            else
+            {
+                // For short moves, try to match exactly
+                foreach (var dir in GetAllDirections())
+                {
+                    if (Math.Abs(dir.X - dx) < 0.01 && Math.Abs(dir.Y - dy) < 0.01)
+                        return dir;
+                }
+            }
+
+            // If we couldn't find a matching direction, create a custom one
+            return new Direction(dx, dy);
         }
     }
 }
