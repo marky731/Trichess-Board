@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using global::Assets.Model; // Add this for Move class
 
 namespace Assets.Model.ChessboardMain.Pieces.Pawn
 {
@@ -33,7 +34,7 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
             return TAKING_DIRECTIONS;
         }
 
-        public override List<string> GetPossibleMoves(Board board)
+        public override List<string> GetPossibleMoves(global::Board board)
         {
             List<string> possibleMoves = new List<string>();
             Field currentField = board.GetField(this.CurrentPosition); // Mevcut konumu al

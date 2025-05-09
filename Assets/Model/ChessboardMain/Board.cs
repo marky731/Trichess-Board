@@ -244,6 +244,9 @@ public class Board : MonoBehaviour
         {
             _chessboard = new Chessboard();
             Debug.Log("Created new Chessboard instance");
+            
+            // Give it time to initialize
+            System.Threading.Thread.Sleep(100);
         }
         
         // Find the MoveValidator component
@@ -259,14 +262,22 @@ public class Board : MonoBehaviour
         // Set the Chessboard reference in the MoveValidator
         _validator.SetChessboard(_chessboard);
         
-        Debug.Log("MoveValidator initialized successfully");
+        // Verify that the Chessboard is properly set
+        if (_validator != null)
+        {
+            Debug.Log("MoveValidator initialized successfully");
+        }
+        else
+        {
+            Debug.LogError("Failed to initialize MoveValidator!");
+        }
     }
     
     // Called after all Start methods have been called
     void OnEnable()
     {
-        // Initialize the MoveValidator after all components have started
-        Invoke("InitializeMoveValidator", 0.1f);
+        // Initialize the MoveValidator immediately instead of with a delay
+        InitializeMoveValidator();
     }
 
     // Verilen alan n dolu olup olmad   n  kontrol eden metod

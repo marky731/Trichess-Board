@@ -267,9 +267,11 @@ namespace Assets.Model.ChessboardMain.Pieces
             double dx = destination.X - source.X;
             double dy = destination.Y - source.Y;
             
-            // Calculate the number of steps needed
-            double distance = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            int steps = (int)Math.Ceiling(distance * 10); // Multiply by 10 for more precision
+            // Calculate the number of steps needed - increase for more precision
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+            int steps = Math.Max(5, (int)(distance * 20)); // More steps for better precision
+            
+            Debug.Log($"Calculating path from ({source.X}, {source.Y}) to ({destination.X}, {destination.Y}) with {steps} steps");
             
             // Normalize the direction vector
             double stepX = dx / steps;
@@ -302,10 +304,14 @@ namespace Assets.Model.ChessboardMain.Pieces
                         }
                     }
                     
+                    // Increase the threshold for considering a field as part of the path
+                    double pathThreshold = 0.5; // Increased from implicit small value
+                    
                     // If we found a field and it's not the source or destination, add it to the path
                     if (closestField != null && 
                         !(Math.Abs(closestField.X - source.X) < 0.01 && Math.Abs(closestField.Y - source.Y) < 0.01) &&
-                        !(Math.Abs(closestField.X - destination.X) < 0.01 && Math.Abs(closestField.Y - destination.Y) < 0.01))
+                        !(Math.Abs(closestField.X - destination.X) < 0.01 && Math.Abs(closestField.Y - destination.Y) < 0.01) &&
+                        closestDistance < pathThreshold) // Only add if it's close enough to the line
                     {
                         // Check if this field is already in the path
                         bool alreadyInPath = false;
@@ -321,23 +327,29 @@ namespace Assets.Model.ChessboardMain.Pieces
                         if (!alreadyInPath)
                         {
                             path.Add(closestField);
+                            Debug.Log($"Added field at ({closestField.X}, {closestField.Y}) to path");
                         }
                     }
                 }
             }
             
+            Debug.Log($"Path contains {path.Count} intermediate fields");
             return path;
         }
 
         // Tahta sınırları içinde mi?
         public bool IsWithinBounds(Field field)
         {
+            // Increase threshold for position matching
+            double positionThreshold = 0.05; // Increased from 0.01
+            
             // For hexagonal board, we need to check if the field exists in our positions dictionary
-            // rather than using simple rectangular bounds
             foreach (var existingField in fieldMap.Keys)
             {
-                if (Math.Abs(existingField.X - field.X) < 0.01 && Math.Abs(existingField.Y - field.Y) < 0.01)
+                if (Math.Abs(existingField.X - field.X) < positionThreshold && 
+                    Math.Abs(existingField.Y - field.Y) < positionThreshold)
                 {
+                    Debug.Log($"Field ({field.X}, {field.Y}) is within bounds, matched to ({existingField.X}, {existingField.Y})");
                     return true;
                 }
             }
@@ -351,13 +363,16 @@ namespace Assets.Model.ChessboardMain.Pieces
                 foreach (string position in allPositions)
                 {
                     Vector2 pos = board.GetPosition(position);
-                    if (Math.Abs(pos.x - field.X) < 0.01 && Math.Abs(pos.y - field.Y) < 0.01)
+                    if (Math.Abs(pos.x - field.X) < positionThreshold && 
+                        Math.Abs(pos.y - field.Y) < positionThreshold)
                     {
+                        Debug.Log($"Field ({field.X}, {field.Y}) is within bounds, matched to position {position} ({pos.x}, {pos.y})");
                         return true;
                     }
                 }
             }
             
+            Debug.Log($"Field ({field.X}, {field.Y}) is NOT within bounds");
             return false; // Field not found in valid positions
         }
 

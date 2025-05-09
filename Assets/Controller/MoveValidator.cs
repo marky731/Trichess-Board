@@ -75,50 +75,72 @@ namespace Assets.Controller
 
             try
             {
+                Debug.Log($"Validating move from ({move.Source.X}, {move.Source.Y}) to ({move.Destination.X}, {move.Destination.Y}) for piece {piece.GetType().Name}");
+                
                 // Check if the piece is trying to move to its current position
                 if (Math.Abs(move.Source.X - move.Destination.X) < 0.01 && Math.Abs(move.Source.Y - move.Destination.Y) < 0.01)
                 {
-                    Debug.Log($"Piece is trying to move to its current position ({move.Source.X}, {move.Source.Y}). This is not a valid move.");
+                    Debug.Log("Validation failed: Piece is trying to move to its current position");
                     return false;
                 }
                 
                 // Taşın hareket kurallarına uygun olup olmadığını kontrol et
                 if (!IsMoveAllowedByPiece(piece, move.Source, move.Destination))
                 {
-                    Debug.Log($"Move from {move.Source.Position} to {move.Destination.Position} is not allowed by piece {piece.GetType().Name}");
+                    Debug.Log($"Validation failed: Move is not allowed by {piece.GetType().Name} movement rules");
                     return false;
+                }
+                else
+                {
+                    Debug.Log("Move is allowed by piece movement rules");
                 }
 
                 // Yolun açık olup olmadığını kontrol et (Vezir, Fil, Kale için)
                 if (!IsPathClear(move.Source, move.Destination))
                 {
-                    Debug.Log($"Path from {move.Source.Position} to {move.Destination.Position} is not clear");
+                    Debug.Log("Validation failed: Path is not clear");
                     return false;
+                }
+                else
+                {
+                    Debug.Log("Path is clear");
                 }
 
                 // Hamlenin tahtanın sınırları içinde olup olmadığını kontrol et
                 if (!IsMoveWithinBounds(move))
                 {
-                    Debug.Log($"Move to {move.Destination.Position} is not within bounds");
+                    Debug.Log("Validation failed: Move is not within bounds");
                     return false;
+                }
+                else
+                {
+                    Debug.Log("Move is within bounds");
                 }
 
                 // Oyuncunun kendi taşını hareket ettirdiğinden emin ol
                 if (!IsPlayerMovingOwnPiece(move))
                 {
-                    Debug.Log($"Player is not moving their own piece. Piece color: {move.MovedPiece.GetColor()}, Current player: {_chessboard.CurrentPlayerColor}");
+                    Debug.Log($"Validation failed: Player is not moving their own piece. Piece color: {move.MovedPiece.GetColor()}, Current player: {_chessboard.CurrentPlayerColor}");
                     return false;
+                }
+                else
+                {
+                    Debug.Log("Player is moving their own piece");
                 }
 
                 // Eğer özel kurallar uygulanıyorsa burada kontrol et (Örneğin: Şah tehdit altında mı)
                 if (IsKingInCheckAfterMove(move))
                 {
-                    Debug.Log("King would be in check after this move");
+                    Debug.Log("Validation failed: King would be in check after move");
                     return false;
+                }
+                else
+                {
+                    Debug.Log("King would not be in check after move");
                 }
 
                 // Eğer yukarıdaki kontrollerin hepsi geçerli ise hamle geçerli sayılır
-                Debug.Log($"Move from {move.Source.Position} to {move.Destination.Position} is valid");
+                Debug.Log("All validation checks passed - move is valid");
                 return true;
             }
             catch (Exception e)
@@ -131,12 +153,39 @@ namespace Assets.Controller
         // Taşın hareket kurallarına uygun olup olmadığını kontrol eder
         private bool IsMoveAllowedByPiece(Piece piece, Field source, Field destination)
         {
-            // Taşın izin verilen yönlerini alır
+            // Get the piece's allowed directions
             HashSet<Direction> allowedDirections = piece.GetDirections();
-            // Hareketin yönünü hesaplar
+            
+            // Calculate the move direction
             Direction moveDirection = Direction.GetDirection(source, destination);
-            // Eğer taşın yönü izin verilen yönlerden biriyse hamle geçerlidir
-            return allowedDirections.Contains(moveDirection);
+            
+            // For debugging
+            Debug.Log($"Move direction: ({moveDirection.X}, {moveDirection.Y})");
+            
+            // Check if any allowed direction is close enough to the move direction
+            foreach (var allowedDir in allowedDirections)
+            {
+                // Calculate the dot product to check direction similarity
+                double dotProduct = moveDirection.X * allowedDir.X + moveDirection.Y * allowedDir.Y;
+                double moveDirLength = Math.Sqrt(moveDirection.X * moveDirection.X + moveDirection.Y * moveDirection.Y);
+                double allowedDirLength = Math.Sqrt(allowedDir.X * allowedDir.X + allowedDir.Y * allowedDir.Y);
+                
+                // Avoid division by zero
+                if (moveDirLength < 0.01 || allowedDirLength < 0.01)
+                    continue;
+                    
+                double similarity = dotProduct / (moveDirLength * allowedDirLength);
+                
+                // If the directions are similar enough (cos of angle > 0.8, which is about 36 degrees)
+                if (similarity > 0.8)
+                {
+                    Debug.Log($"Direction ({moveDirection.X}, {moveDirection.Y}) matches allowed direction ({allowedDir.X}, {allowedDir.Y}) with similarity {similarity}");
+                    return true;
+                }
+            }
+            
+            Debug.Log($"No allowed direction matches move direction ({moveDirection.X}, {moveDirection.Y})");
+            return false;
         }
 
         // Yolun açık olup olmadığını kontrol eder (Vezir, Fil, Kale gibi taşlar için)

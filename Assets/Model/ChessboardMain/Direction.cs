@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;  // Added for Debug.Log
 
 namespace Assets.Model.ChessboardMain
 {
@@ -68,42 +69,42 @@ namespace Assets.Model.ChessboardMain
 
             // Normalize the direction for longer moves
             double length = Math.Sqrt(dx * dx + dy * dy);
-            if (length > 1.5) // If it's more than a single step
+            
+            // Increase this threshold from 0.3 to 0.5 for more lenient matching
+            double matchThreshold = 0.5;
+            
+            // Try to find the closest standard direction
+            double bestMatch = double.MaxValue;
+            Direction bestDir = null;
+
+            foreach (var dir in GetAllDirections())
             {
-                // Try to find the closest standard direction
-                double bestMatch = double.MaxValue;
-                Direction bestDir = null;
-
-                foreach (var dir in GetAllDirections())
-                {
-                    // Calculate the angle between the actual direction and this standard direction
-                    double dotProduct = dx * dir.X + dy * dir.Y;
-                    double dirLength = Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y);
-                    double angleDiff = Math.Abs(dotProduct / (length * dirLength) - 1.0);
+                // Calculate the angle between the actual direction and this standard direction
+                double dotProduct = dx * dir.X + dy * dir.Y;
+                double dirLength = Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y);
+                
+                // Avoid division by zero
+                if (length < 0.01 || dirLength < 0.01)
+                    continue;
                     
-                    if (angleDiff < bestMatch)
-                    {
-                        bestMatch = angleDiff;
-                        bestDir = dir;
-                    }
-                }
-
-                if (bestDir != null && bestMatch < 0.3) // If we found a reasonably close match
+                double angleDiff = Math.Abs(dotProduct / (length * dirLength) - 1.0);
+                
+                if (angleDiff < bestMatch)
                 {
-                    return bestDir;
+                    bestMatch = angleDiff;
+                    bestDir = dir;
                 }
             }
-            else
+
+            // More lenient matching - if we found a reasonably close match
+            if (bestDir != null && bestMatch < matchThreshold)
             {
-                // For short moves, try to match exactly
-                foreach (var dir in GetAllDirections())
-                {
-                    if (Math.Abs(dir.X - dx) < 0.01 && Math.Abs(dir.Y - dy) < 0.01)
-                        return dir;
-                }
+                Debug.Log($"Matched direction ({dx}, {dy}) to standard direction ({bestDir.X}, {bestDir.Y}) with difference {bestMatch}");
+                return bestDir;
             }
 
             // If we couldn't find a matching direction, create a custom one
+            Debug.Log($"Created custom direction ({dx}, {dy}) as no standard direction matched within threshold {matchThreshold}");
             return new Direction(dx, dy);
         }
     }

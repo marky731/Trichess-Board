@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using global::Assets.Model; // Add this for Move class
 
 namespace Assets.Model.ChessboardMain.Pieces.Pawn
 {
@@ -39,7 +40,7 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
         }
 
         // Siyah piyonun geçebileceği tüm olası hamleleri döndürür
-        public override List<string> GetPossibleMoves(Board board)
+        public override List<string> GetPossibleMoves(global::Board board)
         {
             List<string> possibleMoves = new List<string>();
             Field currentField = board.GetField(this.CurrentPosition);
@@ -84,6 +85,5 @@ namespace Assets.Model.ChessboardMain.Pieces.Pawn
             // Tüm geçerli hamleleri döndür
             return possibleMoves;
         }
-
     }
 }
