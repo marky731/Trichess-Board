@@ -119,17 +119,8 @@ public class BoardClickHandler : MonoBehaviour
                 // Unselect the piece after moving
                 GameManager.Instance.UnselectCurrentPiece();
                 
-                // Advance to the next player's turn
-                Assets.Controller.TurnManager turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
-                if (turnManager != null)
-                {
-                    turnManager.NextTurn();
-                    Debug.Log($"Advanced to next player's turn. Current player: {turnManager.currentPlayer}");
-                }
-                else
-                {
-                    Debug.LogError("TurnManager not found! Cannot advance to next player's turn.");
-                }
+                // NOTE: We don't advance the turn here anymore because PieceMover.MovePiece already does that
+                // This prevents the turn from being advanced twice, which was causing the turn to go back to the previous player
             }
             else
             {

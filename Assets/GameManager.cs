@@ -65,13 +65,19 @@ public class GameManager : MonoBehaviour
     { 
         get 
         {
-            // If we have a TurnManager, use its currentPlayer value
-            if (turnManager != null)
+            // First try to use the singleton instance
+            if (Assets.Controller.TurnManager.Instance != null)
+            {
+                return Assets.Controller.TurnManager.Instance.currentPlayer;
+            }
+            // If singleton is not available, use the cached reference
+            else if (turnManager != null)
             {
                 return turnManager.currentPlayer;
             }
             
             // Fallback to default value if TurnManager is not available
+            Debug.LogWarning("No TurnManager available in CurrentPlayerId getter. Defaulting to Player 1.");
             return 1; // Default to player 1
         }
     }
@@ -92,13 +98,19 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // Find the TurnManager
-        turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
+        // Find the TurnManager using the singleton instance
+        turnManager = Assets.Controller.TurnManager.Instance;
         if (turnManager == null)
         {
-            Debug.LogWarning("TurnManager not found! Creating one...");
-            GameObject turnManagerObj = new GameObject("TurnManager");
-            turnManager = turnManagerObj.AddComponent<Assets.Controller.TurnManager>();
+            Debug.LogWarning("TurnManager.Instance is null, trying to find it with FindFirstObjectByType");
+            turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
+            
+            if (turnManager == null)
+            {
+                Debug.LogWarning("TurnManager not found! Creating one...");
+                GameObject turnManagerObj = new GameObject("TurnManager");
+                turnManager = turnManagerObj.AddComponent<Assets.Controller.TurnManager>();
+            }
         }
         
         Debug.Log($"Current player: {CurrentPlayerId}");

@@ -29,13 +29,20 @@ public class TurnIndicator : MonoBehaviour
     
     void Start()
     {
-        // Find the TurnManager
-        turnManager = FindFirstObjectByType<TurnManager>();
+        // Find the TurnManager using the singleton instance
+        turnManager = Assets.Controller.TurnManager.Instance;
         if (turnManager == null)
         {
-            Debug.LogError("TurnManager not found!");
-            return;
+            Debug.LogWarning("TurnManager.Instance is null, trying to find it with FindFirstObjectByType");
+            turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
+            if (turnManager == null)
+            {
+                Debug.LogError("TurnManager not found! Turn indicator will not update.");
+                return;
+            }
         }
+        
+        Debug.Log("TurnIndicator found TurnManager");
         
         // Subscribe to the OnTurnChanged event
         turnManager.OnTurnChanged += OnTurnChanged;
@@ -83,8 +90,23 @@ public class TurnIndicator : MonoBehaviour
     {
         if (turnManager == null)
         {
-            Debug.LogWarning("TurnManager is null in UpdateTurnIndicator!");
-            return;
+            Debug.LogWarning("TurnManager is null in UpdateTurnIndicator! Trying to find it...");
+            turnManager = Assets.Controller.TurnManager.Instance;
+            if (turnManager == null)
+            {
+                turnManager = FindFirstObjectByType<Assets.Controller.TurnManager>();
+                if (turnManager == null)
+                {
+                    Debug.LogError("Could not find TurnManager! Turn indicator will not update.");
+                    return;
+                }
+                else
+                {
+                    // Re-subscribe to the event
+                    turnManager.OnTurnChanged += OnTurnChanged;
+                    Debug.Log("Re-subscribed to TurnManager.OnTurnChanged event");
+                }
+            }
         }
         
         int currentPlayer = turnManager.currentPlayer;
@@ -93,6 +115,7 @@ public class TurnIndicator : MonoBehaviour
         if (_turnText != null)
         {
             _turnText.text = $"Player {currentPlayer}'s Turn";
+            Debug.Log($"Updated turn text to: {_turnText.text}");
         }
         else
         {
@@ -129,5 +152,19 @@ public class TurnIndicator : MonoBehaviour
     {
         Debug.Log("Forcing update of TurnIndicator");
         UpdateTurnIndicator();
+    }
+    
+    // This method can be called to verify the turn indicator is working
+    public void DebugTurnState()
+    {
+        if (turnManager == null)
+        {
+            Debug.LogError("TurnManager is null in DebugTurnState!");
+            return;
+        }
+        
+        Debug.Log($"Current player according to TurnManager: Player {turnManager.currentPlayer}");
+        Debug.Log($"Current turn text: {(_turnText != null ? _turnText.text : "null")}");
+        Debug.Log($"Current background color: {(_backgroundImage != null ? _backgroundImage.color.ToString() : "null")}");
     }
 }

@@ -32,8 +32,16 @@ namespace Assets.Controller
         void Start()
         {
             moveValidator = FindFirstObjectByType<MoveValidator>();
-            turnManager = FindFirstObjectByType<TurnManager>();
+            // Use the singleton instance if available
+            turnManager = TurnManager.Instance;
+            if (turnManager == null)
+            {
+                turnManager = FindFirstObjectByType<TurnManager>();
+                Debug.LogWarning("TurnManager.Instance was null, found instance through FindFirstObjectByType");
+            }
             board = FindFirstObjectByType<Board>();
+            
+            Debug.Log("PieceMover initialized");
         }
 
         // Taşın hareketini gerçekleştiren ana metod
@@ -250,11 +258,15 @@ namespace Assets.Controller
                 return;
             }
 
-            // 7. Sıradaki oyuncuya geçiş yapılır
-            if (turnManager != null)
+            // Track if the move was successful
+            bool moveSuccessful = true;
+            
+            // 7. Sıradaki oyuncuya geçiş yapılır - only if the move was successful
+            if (moveSuccessful && turnManager != null)
             {
                 try
                 {
+                    Debug.Log($"Move successful, advancing turn from Player {turnManager.currentPlayer}");
                     turnManager.NextTurn();
                 }
                 catch (Exception e)
@@ -263,9 +275,28 @@ namespace Assets.Controller
                     // Continue anyway, as the piece has already moved
                 }
             }
-            else
+            else if (turnManager == null)
             {
-                Debug.LogWarning("TurnManager is null, skipping turn change");
+                Debug.LogWarning("TurnManager is null, trying to find it...");
+                turnManager = TurnManager.Instance;
+                if (turnManager == null)
+                {
+                    turnManager = FindFirstObjectByType<TurnManager>();
+                    if (turnManager != null)
+                    {
+                        Debug.Log("Found TurnManager, advancing turn");
+                        turnManager.NextTurn();
+                    }
+                    else
+                    {
+                        Debug.LogError("Could not find TurnManager! Turn will not advance.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Found TurnManager.Instance, advancing turn");
+                    turnManager.NextTurn();
+                }
             }
             
             Debug.Log("MovePiece completed successfully");

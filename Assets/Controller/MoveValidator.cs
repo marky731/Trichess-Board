@@ -215,7 +215,38 @@ namespace Assets.Controller
         // Oyuncunun kendi taşını hareket ettirdiğinden emin olur
         private bool IsPlayerMovingOwnPiece(Move move)
         {
-            // Eğer taşın rengi, oyuncunun rengiyle uyuyorsa geçerli
+            // First check if the piece's PlayerId matches the current player
+            if (move.MovedPiece.PlayerId > 0)
+            {
+                int currentPlayer = 1; // Default to player 1
+                
+                // Try to get the current player from TurnManager.Instance
+                if (TurnManager.Instance != null)
+                {
+                    currentPlayer = TurnManager.Instance.currentPlayer;
+                    Debug.Log($"Using TurnManager.Instance.currentPlayer: {currentPlayer}");
+                }
+                // Fallback to _chessboard.CurrentPlayerColor
+                else if (_chessboard != null)
+                {
+                    // Convert color to player ID (assuming White=1, Gray=2, Black=3)
+                    if (_chessboard.CurrentPlayerColor == Assets.Model.PieceColor.White)
+                        currentPlayer = 1;
+                    else if (_chessboard.CurrentPlayerColor == Assets.Model.PieceColor.Gray)
+                        currentPlayer = 2;
+                    else if (_chessboard.CurrentPlayerColor == Assets.Model.PieceColor.Black)
+                        currentPlayer = 3;
+                    
+                    Debug.Log($"Using _chessboard.CurrentPlayerColor: {_chessboard.CurrentPlayerColor} -> Player {currentPlayer}");
+                }
+                
+                bool isValid = move.MovedPiece.PlayerId == currentPlayer;
+                Debug.Log($"IsPlayerMovingOwnPiece: Piece PlayerId={move.MovedPiece.PlayerId}, Current Player={currentPlayer}, IsValid={isValid}");
+                return isValid;
+            }
+            
+            // Fallback to color check if PlayerId is not set
+            Debug.LogWarning("Piece PlayerId not set, falling back to color check");
             return move.MovedPiece.GetColor() == _chessboard.CurrentPlayerColor;
         }
 

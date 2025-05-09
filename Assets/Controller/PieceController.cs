@@ -34,13 +34,24 @@ public class PieceController : MonoBehaviour
                 return;
             }
             
-            // Check if it's this player's turn
-            int currentPlayerId = GameManager.Instance.CurrentPlayerId;
+            // Check if it's this player's turn using TurnManager.Instance if available
+            int currentPlayerId;
+            if (Assets.Controller.TurnManager.Instance != null)
+            {
+                currentPlayerId = Assets.Controller.TurnManager.Instance.currentPlayer;
+            }
+            else
+            {
+                currentPlayerId = GameManager.Instance.CurrentPlayerId;
+            }
+            
             if (piece.PlayerId != currentPlayerId)
             {
                 Debug.Log($"Not your turn! Current player: {currentPlayerId}, Piece belongs to player: {piece.PlayerId}");
                 return;
             }
+            
+            Debug.Log($"Valid piece selection: Current player: {currentPlayerId}, Piece belongs to player: {piece.PlayerId}");
             
             // Find the current position of the piece based on its GameObject position
             Board board = FindFirstObjectByType<Board>();

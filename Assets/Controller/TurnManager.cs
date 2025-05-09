@@ -9,6 +9,9 @@ namespace Assets.Controller
 {
     public class TurnManager : MonoBehaviour
     {
+        // Singleton instance
+        public static TurnManager Instance { get; private set; }
+        
         // Event that is triggered when the turn changes
         public event Action<int> OnTurnChanged;
         
@@ -29,6 +32,22 @@ namespace Assets.Controller
             }
         }
 
+        void Awake()
+        {
+            // Singleton pattern implementation
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+                Debug.Log("TurnManager instance created");
+            }
+            else if (Instance != this)
+            {
+                Debug.LogWarning("Multiple TurnManager instances detected. Destroying duplicate.");
+                Destroy(gameObject);
+            }
+        }
+        
         void Start()
         {
             // Announce the initial player
@@ -39,13 +58,16 @@ namespace Assets.Controller
 
         public void NextTurn()
         {
+            // Store the previous player for logging
+            int previousPlayer = currentPlayer;
+            
             // Calculate the next player (1 → 2 → 3 → 1)
             int nextPlayer = (currentPlayer % 3) + 1;
             
             // Set the current player to the next player
             currentPlayer = nextPlayer;
             
-            Debug.Log("Turn changed. Current player: Player " + currentPlayer);
+            Debug.Log($"Turn changed from Player {previousPlayer} to Player {currentPlayer}");
             
             // Remove any highlights from the previous player's pieces
             RemoveAllHighlights();
