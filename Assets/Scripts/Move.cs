@@ -27,19 +27,5 @@ namespace Assets.Model.ChessboardMain.Pieces
             Moved = movedPiece.IsMoved;
             MovedPiece.SetMoved();
         }
-
-        public Move()
-        {
-            MovedPiece = null;
-            Source = null;
-            Destination = null;
-            TakenPiece = null;
-            Moved = false;
-        }
-
-        public void SetPawnPromotion(Piece promotionPiece)
-        {
-            PromotionPiece = promotionPiece;
-        }
     }
 }

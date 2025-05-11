@@ -56,18 +56,12 @@ namespace Assets.Model.ChessboardMain
             }
         }
 
-        /// <summary>
-        /// Initialize the field direction map with the board reference.
-        /// </summary>
         public void Initialize(Board board)
         {
             _board = board;
             GenerateAllMoves();
         }
 
-        /// <summary>
-        /// Generate all valid moves for all piece types and positions.
-        /// </summary>
         private void GenerateAllMoves()
         {
             if (_board == null)
@@ -114,9 +108,6 @@ namespace Assets.Model.ChessboardMain
             GenerateBlackPawnMoves(position);
         }
 
-        /// <summary>
-        /// Generate valid white pawn moves for a given position.
-        /// </summary>
         private void GenerateWhitePawnMoves(string position)
         {
             // Parse the position
@@ -133,50 +124,41 @@ namespace Assets.Model.ChessboardMain
             {
                 // Special case: D5 can go to E9
                 moves.Add("E9");
+                Debug.Log("Added special move: D5 -> E9");
             }
-            else if (position == "I5")
+            
+            if (position == "I5")
             {
                 // Special case: I5 can go to E4
                 moves.Add("E4");
+                Debug.Log("Added special move: I5 -> E4");
             }
-            else if (position == "D4")
-            {
-                // Special case: D4 can go to I9
-                moves.Add("I9");
-            }
-            else if (position == "E4")
-            {
-                // Special case: E4 can go to I5
-                moves.Add("I5");
-            }
+
             // Special case for I, J, K, L columns at row 5
-            else if ((col == 'I' || col == 'J' || col == 'K' || col == 'L') && row == 5)
+            if ((col == 'I' || col == 'J' || col == 'K' || col == 'L') && row == 5)
             {
                 // They can go to number 9 from 5, keeping the same letter
                 string jumpMove = $"{col}9";
-                if (IsValidPosition(jumpMove))
-                {
-                    moves.Add(jumpMove);
-                }
+                moves.Add(jumpMove);
             }
             // For I, J, K, L columns after row 9, they start increasing
             else if ((col == 'I' || col == 'J' || col == 'K' || col == 'L') && row >= 9)
             {
                 // Move forward by increasing the row number
                 string forwardMove = $"{col}{row + 1}";
-                if (IsValidPosition(forwardMove))
-                {
-                    moves.Add(forwardMove);
-                }
+                moves.Add(forwardMove);
             }
             else
             {
                 // Regular move: same letter, decrease number
                 string forwardMove = $"{col}{row - 1}";
-                if (IsValidPosition(forwardMove))
-                {
-                    moves.Add(forwardMove);
-                }
+                moves.Add(forwardMove);
+            }
+
+            if (row == 7)
+            {
+                string forwardMove = $"{col}5";
+                moves.Add(forwardMove);
             }
 
             // Store the moves
@@ -184,9 +166,6 @@ namespace Assets.Model.ChessboardMain
             _pawnCaptures[1][position] = captures; // No captures for now
         }
 
-        /// <summary>
-        /// Generate valid gray pawn moves for a given position.
-        /// </summary>
         private void GenerateGrayPawnMoves(string position)
         {
             // Parse the position
@@ -204,19 +183,26 @@ namespace Assets.Model.ChessboardMain
                 // Special case: D4 can go to I9
                 moves.Add("I9");
             }
-            else if (position == "E4")
+            
+            if (position == "E4")
             {
                 // Special case: E4 can go to I5
                 moves.Add("I5");
             }
-            else
+
+            if (row == 4)
             {
-                // Regular move: same letter, increase number
-                string forwardMove = $"{col}{row + 1}";
-                if (IsValidPosition(forwardMove))
-                {
-                    moves.Add(forwardMove);
-                }
+                moves.Add(col + "9");
+            }
+
+            // Regular move: same letter, increase number
+            string forwardMove = $"{col}{row + 1}";
+            moves.Add(forwardMove);
+
+            if (row == 2)
+            {
+                forwardMove = $"{col}4";
+                moves.Add(forwardMove);
             }
 
             // Store the moves
@@ -224,9 +210,7 @@ namespace Assets.Model.ChessboardMain
             _pawnCaptures[2][position] = captures; // No captures for now
         }
 
-        /// <summary>
-        /// Generate valid black pawn moves for a given position.
-        /// </summary>
+
         private void GenerateBlackPawnMoves(string position)
         {
             // Parse the position
@@ -244,57 +228,55 @@ namespace Assets.Model.ChessboardMain
                 // Special case: I9 can go to D4
                 moves.Add("D4");
             }
-            else if (position == "E9")
+            if (position == "E9")
             {
                 // Special case: E9 can go to D5
                 moves.Add("D5");
             }
             // Special case for I, J, K, L, E, F, G, H columns at row 9
-            else if ((col >= 'E' && col <= 'H' || col >= 'I' && col <= 'L') && row == 9)
+            if ((col >= 'E' && col <= 'H' || col >= 'I' && col <= 'L') && row == 9)
             {
                 // For I, J, K, L columns, they can go to number 4 for E, F, G, H
                 if (col >= 'I' && col <= 'L')
                 {
-                    char newCol = (char)('E' + (col - 'I')); // Map I->E, J->F, K->G, L->H
-                    if (newCol >= 'E' && newCol <= 'H') // Safety check
-                    {
-                        string jumpMove = $"{newCol}4";
-                        if (IsValidPosition(jumpMove))
-                        {
-                            moves.Add(jumpMove);
-                        }
-                    }
+                    string jumpMove = $"{col}4";
+                    moves.Add(jumpMove);
                 }
-                
+
                 // For E, F, G, H columns, they can go to number 4 for I, J, K, L
                 if (col >= 'E' && col <= 'H')
                 {
-                    char newCol = (char)('I' + (col - 'E')); // Map E->I, F->J, G->K, H->L
-                    if (newCol >= 'I' && newCol <= 'L') // Safety check
-                    {
-                        string jumpMove = $"{newCol}4";
-                        if (IsValidPosition(jumpMove))
-                        {
-                            moves.Add(jumpMove);
-                        }
-                    }
+                        string jumpMove = $"{col}4";
+                        moves.Add(jumpMove);
                 }
-                
+
                 // They can also go to number 5 for the same letter
                 string sameColMove = $"{col}5";
-                if (IsValidPosition(sameColMove))
-                {
-                    moves.Add(sameColMove);
-                }
+                moves.Add(sameColMove);
             }
             else
             {
-                // Regular move: same letter, decrease number
-                string forwardMove = $"{col}{row - 1}";
-                if (IsValidPosition(forwardMove))
+                string forwardMove = $"{col}{row + 1}";
+
+                if (row >= 5 && row <= 8)
                 {
+                    // Regular move: same letter, increase number
+                    forwardMove = $"{col}{row + 1}";
                     moves.Add(forwardMove);
                 }
+                else
+                {
+                    // Regular move: same letter, decrease number
+                    forwardMove = $"{col}{row - 1}";
+                    moves.Add(forwardMove);
+                }
+
+            }
+
+            if (row == 11)
+            {
+                string forwardMove = $"{col}9";
+                moves.Add(forwardMove);
             }
 
             // Store the moves
@@ -302,9 +284,6 @@ namespace Assets.Model.ChessboardMain
             _pawnCaptures[3][position] = captures; // No captures for now
         }
 
-        /// <summary>
-        /// Generate valid rook moves for a given position.
-        /// </summary>
         private void GenerateRookMoves(string position)
         {
             // Rooks move in straight lines (horizontally, vertically, and one diagonal in hexagonal chess)
@@ -328,9 +307,6 @@ namespace Assets.Model.ChessboardMain
             _rookMoves[position] = moves;
         }
 
-        /// <summary>
-        /// Generate valid bishop moves for a given position.
-        /// </summary>
         private void GenerateBishopMoves(string position)
         {
             // Bishops move in diagonal lines (two of the three diagonals in hexagonal chess)
@@ -354,9 +330,6 @@ namespace Assets.Model.ChessboardMain
             _bishopMoves[position] = moves;
         }
 
-        /// <summary>
-        /// Generate valid knight moves for a given position.
-        /// </summary>
         private void GenerateKnightMoves(string position)
         {
             // Knights move in an L-shape (2 steps in one direction, then 1 step perpendicular)
@@ -402,10 +375,6 @@ namespace Assets.Model.ChessboardMain
             // Store the moves
             _knightMoves[position] = moves;
         }
-
-        /// <summary>
-        /// Generate valid queen moves for a given position.
-        /// </summary>
         private void GenerateQueenMoves(string position)
         {
             // Queens can move like rooks or bishops
@@ -429,9 +398,6 @@ namespace Assets.Model.ChessboardMain
             _queenMoves[position] = moves;
         }
 
-        /// <summary>
-        /// Generate valid king moves for a given position.
-        /// </summary>
         private void GenerateKingMoves(string position)
         {
             // Kings move one step in any direction
@@ -524,104 +490,104 @@ namespace Assets.Model.ChessboardMain
             return false;
         }
 
-    /// <summary>
-    /// Check if two positions are in a diagonal line (two of the three diagonals in hexagonal chess).
-    /// </summary>
-    private bool IsInDiagonalLine(string position1, string position2)
-    {
-        // Parse the positions
-        if (position1.Length < 2 || position2.Length < 2) return false;
-        char col1 = position1[0];
-        char col2 = position2[0];
-        int row1, row2;
-        if (!int.TryParse(position1.Substring(1), out row1) || !int.TryParse(position2.Substring(1), out row2)) return false;
-
-        // Northwest/Southeast diagonal
-        if ((col2 - col1) == -(row2 - row1)) return true;
-
-        // Northeast/Southwest diagonal
-        if ((col2 - col1) == (row2 - row1)) return true;
-
-        // Special case: Diagonal across the missing coordinates (E5, F6, G7, H8)
-        // A1 to L8 diagonal and similar paths
-        if ((col1 >= 'A' && col1 <= 'D' && col2 >= 'I' && col2 <= 'L') || 
-            (col1 >= 'I' && col1 <= 'L' && col2 >= 'A' && col2 <= 'D'))
+        /// <summary>
+        /// Check if two positions are in a diagonal line (two of the three diagonals in hexagonal chess).
+        /// </summary>
+        private bool IsInDiagonalLine(string position1, string position2)
         {
-            // Calculate the expected row difference based on column difference
-            int colDiff = Math.Abs(col2 - col1);
-            int rowDiff = Math.Abs(row2 - row1);
-            
-            // For the special diagonal that crosses the missing coordinates
-            // The row difference should be less than the column difference
-            // because some coordinates are missing
-            if (colDiff > rowDiff)
+            // Parse the positions
+            if (position1.Length < 2 || position2.Length < 2) return false;
+            char col1 = position1[0];
+            char col2 = position2[0];
+            int row1, row2;
+            if (!int.TryParse(position1.Substring(1), out row1) || !int.TryParse(position2.Substring(1), out row2)) return false;
+
+            // Northwest/Southeast diagonal
+            if ((col2 - col1) == -(row2 - row1)) return true;
+
+            // Northeast/Southwest diagonal
+            if ((col2 - col1) == (row2 - row1)) return true;
+
+            // Special case: Diagonal across the missing coordinates (E5, F6, G7, H8)
+            // A1 to L8 diagonal and similar paths
+            if ((col1 >= 'A' && col1 <= 'D' && col2 >= 'I' && col2 <= 'L') ||
+                (col1 >= 'I' && col1 <= 'L' && col2 >= 'A' && col2 <= 'D'))
             {
-                // Check if the positions are on the same diagonal line
-                // by verifying if they follow the pattern of the special diagonal
-                
-                // Map columns to numerical values (A=0, B=1, etc.)
-                int colVal1 = col1 - 'A';
-                int colVal2 = col2 - 'A';
-                
-                // Calculate expected row values for the diagonal
-                int expectedRow1, expectedRow2;
-                
-                // If moving from A-D to I-L
-                if (col1 <= 'D' && col2 >= 'I')
+                // Calculate the expected row difference based on column difference
+                int colDiff = Math.Abs(col2 - col1);
+                int rowDiff = Math.Abs(row2 - row1);
+
+                // For the special diagonal that crosses the missing coordinates
+                // The row difference should be less than the column difference
+                // because some coordinates are missing
+                if (colDiff > rowDiff)
                 {
-                    // A1->L8 pattern: row increases with column, but jumps over missing coordinates
-                    expectedRow1 = colVal1 + 1; // A->1, B->2, C->3, D->4
-                    expectedRow2 = (colVal2 - 8) + 5; // I->5, J->6, K->7, L->8
+                    // Check if the positions are on the same diagonal line
+                    // by verifying if they follow the pattern of the special diagonal
+
+                    // Map columns to numerical values (A=0, B=1, etc.)
+                    int colVal1 = col1 - 'A';
+                    int colVal2 = col2 - 'A';
+
+                    // Calculate expected row values for the diagonal
+                    int expectedRow1, expectedRow2;
+
+                    // If moving from A-D to I-L
+                    if (col1 <= 'D' && col2 >= 'I')
+                    {
+                        // A1->L8 pattern: row increases with column, but jumps over missing coordinates
+                        expectedRow1 = colVal1 + 1; // A->1, B->2, C->3, D->4
+                        expectedRow2 = (colVal2 - 8) + 5; // I->5, J->6, K->7, L->8
+                    }
+                    // If moving from I-L to A-D
+                    else
+                    {
+                        // L8->A1 pattern (reverse direction)
+                        expectedRow1 = (colVal1 - 8) + 5; // I->5, J->6, K->7, L->8
+                        expectedRow2 = colVal2 + 1; // A->1, B->2, C->3, D->4
+                    }
+
+                    // Check if the actual rows match the expected rows for this diagonal
+                    return (row1 == expectedRow1 && row2 == expectedRow2);
                 }
-                // If moving from I-L to A-D
+            }
+
+            // Special case: E-H columns to I-L columns diagonal jumps
+            if ((col1 >= 'E' && col1 <= 'H' && col2 >= 'I' && col2 <= 'L') ||
+                (col1 >= 'I' && col1 <= 'L' && col2 >= 'E' && col2 <= 'H'))
+            {
+                // Handle diagonal jumps between E-H and I-L columns
+                // For example: E9 to H12 or I5 to L8
+
+                char firstCol, secondCol;
+                int firstRow, secondRow;
+
+                // Ensure firstCol is the smaller column
+                if (col1 <= col2)
+                {
+                    firstCol = col1;
+                    firstRow = row1;
+                    secondCol = col2;
+                    secondRow = row2;
+                }
                 else
                 {
-                    // L8->A1 pattern (reverse direction)
-                    expectedRow1 = (colVal1 - 8) + 5; // I->5, J->6, K->7, L->8
-                    expectedRow2 = colVal2 + 1; // A->1, B->2, C->3, D->4
+                    firstCol = col2;
+                    firstRow = row2;
+                    secondCol = col1;
+                    secondRow = row1;
                 }
-                
-                // Check if the actual rows match the expected rows for this diagonal
-                return (row1 == expectedRow1 && row2 == expectedRow2);
-            }
-        }
-        
-        // Special case: E-H columns to I-L columns diagonal jumps
-        if ((col1 >= 'E' && col1 <= 'H' && col2 >= 'I' && col2 <= 'L') ||
-            (col1 >= 'I' && col1 <= 'L' && col2 >= 'E' && col2 <= 'H'))
-        {
-            // Handle diagonal jumps between E-H and I-L columns
-            // For example: E9 to H12 or I5 to L8
-            
-            char firstCol, secondCol;
-            int firstRow, secondRow;
-            
-            // Ensure firstCol is the smaller column
-            if (col1 <= col2)
-            {
-                firstCol = col1;
-                firstRow = row1;
-                secondCol = col2;
-                secondRow = row2;
-            }
-            else
-            {
-                firstCol = col2;
-                firstRow = row2;
-                secondCol = col1;
-                secondRow = row1;
-            }
-            
-            // Check if the column difference matches the row difference
-            int colDiff = secondCol - firstCol;
-            int rowDiff = secondRow - firstRow;
-            
-            // For standard diagonals within these regions
-            return colDiff == rowDiff;
-        }
 
-        return false;
-    }
+                // Check if the column difference matches the row difference
+                int colDiff = secondCol - firstCol;
+                int rowDiff = secondRow - firstRow;
+
+                // For standard diagonals within these regions
+                return colDiff == rowDiff;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Get valid pawn moves for a given position and player.
