@@ -502,68 +502,46 @@ namespace Assets.Model.ChessboardMain
             int row1, row2;
             if (!int.TryParse(position1.Substring(1), out row1) || !int.TryParse(position2.Substring(1), out row2)) return false;
 
+            // Standard diagonals
             // Northwest/Southeast diagonal
             if ((col2 - col1) == -(row2 - row1)) return true;
 
             // Northeast/Southwest diagonal
             if ((col2 - col1) == (row2 - row1)) return true;
 
-            // Special case: Diagonal across the missing coordinates (E5, F6, G7, H8)
-            // A1 to L8 diagonal and similar paths
-            if ((col1 >= 'A' && col1 <= 'D' && col2 >= 'I' && col2 <= 'L') ||
-                (col1 >= 'I' && col1 <= 'L' && col2 >= 'A' && col2 <= 'D'))
+            // Get column and row differences
+            int colDiff = Math.Abs(col2 - col1);
+            int rowDiff = Math.Abs(row2 - row1);
+            
+            // Determine which regions the positions are in
+            bool col1InRegionA = col1 >= 'A' && col1 <= 'D';
+            bool col1InRegionB = col1 >= 'E' && col1 <= 'H';
+            bool col1InRegionC = col1 >= 'I' && col1 <= 'L';
+            
+            bool col2InRegionA = col2 >= 'A' && col2 <= 'D';
+            bool col2InRegionB = col2 >= 'E' && col2 <= 'H';
+            bool col2InRegionC = col2 >= 'I' && col2 <= 'L';
+            
+            // Determine row regions
+            bool row1InLower = row1 >= 1 && row1 <= 4;
+            bool row1InMiddle = row1 >= 5 && row1 <= 8;
+            bool row1InUpper = row1 >= 9 && row1 <= 12;
+            
+            bool row2InLower = row2 >= 1 && row2 <= 4;
+            bool row2InMiddle = row2 >= 5 && row2 <= 8;
+            bool row2InUpper = row2 >= 9 && row2 <= 12;
+            
+            // Region A to Region C diagonal lines (A-D to I-L)
+            if ((col1InRegionA && col2InRegionC) || (col1InRegionC && col2InRegionA))
             {
-                // Calculate the expected row difference based on column difference
-                int colDiff = Math.Abs(col2 - col1);
-                int rowDiff = Math.Abs(row2 - row1);
-
-                // For the special diagonal that crosses the missing coordinates
-                // The row difference should be less than the column difference
-                // because some coordinates are missing
-                if (colDiff > rowDiff)
-                {
-                    // Check if the positions are on the same diagonal line
-                    // by verifying if they follow the pattern of the special diagonal
-
-                    // Map columns to numerical values (A=0, B=1, etc.)
-                    int colVal1 = col1 - 'A';
-                    int colVal2 = col2 - 'A';
-
-                    // Calculate expected row values for the diagonal
-                    int expectedRow1, expectedRow2;
-
-                    // If moving from A-D to I-L
-                    if (col1 <= 'D' && col2 >= 'I')
-                    {
-                        // A1->L8 pattern: row increases with column, but jumps over missing coordinates
-                        expectedRow1 = colVal1 + 1; // A->1, B->2, C->3, D->4
-                        expectedRow2 = (colVal2 - 8) + 5; // I->5, J->6, K->7, L->8
-                    }
-                    // If moving from I-L to A-D
-                    else
-                    {
-                        // L8->A1 pattern (reverse direction)
-                        expectedRow1 = (colVal1 - 8) + 5; // I->5, J->6, K->7, L->8
-                        expectedRow2 = colVal2 + 1; // A->1, B->2, C->3, D->4
-                    }
-
-                    // Check if the actual rows match the expected rows for this diagonal
-                    return (row1 == expectedRow1 && row2 == expectedRow2);
-                }
-            }
-
-            // Special case: E-H columns to I-L columns diagonal jumps
-            if ((col1 >= 'E' && col1 <= 'H' && col2 >= 'I' && col2 <= 'L') ||
-                (col1 >= 'I' && col1 <= 'L' && col2 >= 'E' && col2 <= 'H'))
-            {
-                // Handle diagonal jumps between E-H and I-L columns
-                // For example: E9 to H12 or I5 to L8
-
+                // A1 to L8 diagonal and similar paths
+                // These diagonals cross the missing coordinates (E5, F6, G7, H8)
+                
+                // Normalize the positions so that firstCol is in Region A and secondCol is in Region C
                 char firstCol, secondCol;
                 int firstRow, secondRow;
-
-                // Ensure firstCol is the smaller column
-                if (col1 <= col2)
+                
+                if (col1InRegionA)
                 {
                     firstCol = col1;
                     firstRow = row1;
@@ -577,13 +555,292 @@ namespace Assets.Model.ChessboardMain
                     secondCol = col1;
                     secondRow = row1;
                 }
-
-                // Check if the column difference matches the row difference
-                int colDiff = secondCol - firstCol;
-                int rowDiff = secondRow - firstRow;
-
-                // For standard diagonals within these regions
-                return colDiff == rowDiff;
+                
+                // Map columns to numerical values (A=0, B=1, etc.)
+                int firstColVal = firstCol - 'A';
+                int secondColVal = secondCol - 'A';
+                
+                // Check for the A1->L8 pattern and similar diagonals
+                if (firstRow == firstColVal + 1 && secondRow == (secondColVal - 8) + 5)
+                {
+                    return true;
+                }
+                
+                // Check for other diagonal patterns between Region A and Region C
+                
+                // Pattern: 6 columns change, 2 rows change (C5 to I7)
+                if (colDiff == 6 && rowDiff == 2)
+                {
+                    return true;
+                }
+                
+                // Pattern: 7 columns change, 3 rows change
+                if (colDiff == 7 && rowDiff == 3)
+                {
+                    return true;
+                }
+                
+                // Pattern: 8 columns change, 4 rows change
+                if (colDiff == 8 && rowDiff == 4)
+                {
+                    return true;
+                }
+                
+                // Pattern: 8 columns change, 3 rows change (D7 to L10)
+                if (colDiff == 8 && rowDiff == 3)
+                {
+                    return true;
+                }
+            }
+            
+            // Region A to Region B diagonal lines (A-D to E-H)
+            if ((col1InRegionA && col2InRegionB) || (col1InRegionB && col2InRegionA))
+            {
+                // Normalize the positions so that firstCol is in Region A and secondCol is in Region B
+                char firstCol, secondCol;
+                int firstRow, secondRow;
+                
+                if (col1InRegionA)
+                {
+                    firstCol = col1;
+                    firstRow = row1;
+                    secondCol = col2;
+                    secondRow = row2;
+                }
+                else
+                {
+                    firstCol = col2;
+                    firstRow = row2;
+                    secondCol = col1;
+                    secondRow = row1;
+                }
+                
+                // Standard diagonal check
+                if (colDiff == rowDiff || colDiff == -rowDiff) return true;
+                
+                // Special diagonal from lower A-D to upper E-H
+                if (firstRow >= 1 && firstRow <= 4 && secondRow >= 9 && secondRow <= 12)
+                {
+                    return true;
+                }
+                
+                // Pattern: A6 to C4 and similar moves (2 columns change, 2 rows change)
+                if (colDiff == 2 && rowDiff == 2)
+                {
+                    return true;
+                }
+                
+                // Pattern: 4 columns change, 8 rows change
+                if (colDiff == 4 && rowDiff == 8)
+                {
+                    return true;
+                }
+            }
+            
+            // Region B to Region C diagonal lines (E-H to I-L)
+            if ((col1InRegionB && col2InRegionC) || (col1InRegionC && col2InRegionB))
+            {
+                // Normalize the positions so that firstCol is in Region B and secondCol is in Region C
+                char firstCol, secondCol;
+                int firstRow, secondRow;
+                
+                if (col1InRegionB)
+                {
+                    firstCol = col1;
+                    firstRow = row1;
+                    secondCol = col2;
+                    secondRow = row2;
+                }
+                else
+                {
+                    firstCol = col2;
+                    firstRow = row2;
+                    secondCol = col1;
+                    secondRow = row1;
+                }
+                
+                // Standard diagonal check
+                if (colDiff == rowDiff || colDiff == -rowDiff) return true;
+                
+                // Special diagonal from lower E-H to upper I-L
+                if (firstRow >= 1 && firstRow <= 4 && secondRow >= 9 && secondRow <= 12)
+                {
+                    int expectedRowDiff = colDiff + 4; // Adjusted based on observed patterns
+                    if (rowDiff == expectedRowDiff) return true;
+                }
+                
+                // Special diagonal from upper E-H to middle I-L
+                if (firstRow >= 9 && firstRow <= 12 && secondRow >= 5 && secondRow <= 8)
+                {
+                    int expectedRowDiff = colDiff - 4; // Adjusted based on observed patterns
+                    if (Math.Abs(rowDiff) == Math.Abs(expectedRowDiff)) return true;
+                }
+                
+                // Pattern: F4 to H10 and similar moves (2 columns change, 6 rows change)
+                if (colDiff == 2 && rowDiff == 6)
+                {
+                    return true;
+                }
+                
+                // Pattern: J6 to E9 and similar moves (5 columns change, 3 rows change)
+                if (colDiff == 5 && rowDiff == 3)
+                {
+                    return true;
+                }
+                
+                // Pattern: F12 to K5 (5 columns change, 7 rows change)
+                if (colDiff == 5 && rowDiff == 7)
+                {
+                    return true;
+                }
+                
+                // Pattern: L10 to I6 (3 columns change, 4 rows change)
+                if (colDiff == 3 && rowDiff == 4)
+                {
+                    return true;
+                }
+                
+                // Pattern: J12 to F9 (4 columns change, 3 rows change)
+                if (colDiff == 4 && rowDiff == 3)
+                {
+                    return true;
+                }
+                
+                // Pattern: G9 to H4 or F9 to G4 (1 column change, 5 rows change)
+                if (colDiff == 1 && rowDiff == 5)
+                {
+                    return true;
+                }
+            }
+            
+            // Diagonal lines within Region C (I-L)
+            if (col1InRegionC && col2InRegionC)
+            {
+                // Standard diagonal check
+                if (colDiff == rowDiff || colDiff == -rowDiff) return true;
+                
+                // Pattern: L7 to J5 and similar moves (3 columns change, 2 rows change)
+                if (colDiff == 3 && rowDiff == 2)
+                {
+                    return true;
+                }
+                
+                // Pattern: K9 to J5 and similar moves (1 column change, 4 rows change)
+                if (colDiff == 1 && rowDiff == 4)
+                {
+                    return true;
+                }
+                
+                // Pattern: 2 columns change, 3 rows change
+                if (colDiff == 2 && rowDiff == 3)
+                {
+                    return true;
+                }
+            }
+            
+            // Diagonal lines within Region B (E-H)
+            if (col1InRegionB && col2InRegionB)
+            {
+                // Standard diagonal check
+                if (colDiff == rowDiff || colDiff == -rowDiff) return true;
+                
+                // Pattern: H10 to F4 (2 columns change, 6 rows change)
+                if (colDiff == 2 && rowDiff == 6)
+                {
+                    return true;
+                }
+                
+                // Pattern: 1 column change, 5 rows change
+                if (colDiff == 1 && rowDiff == 5)
+                {
+                    return true;
+                }
+            }
+            
+            // Additional patterns observed from the images
+            
+            // Pattern: 4 columns change, 2 rows change
+            if (colDiff == 4 && rowDiff == 2)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 6 rows change
+            if (colDiff == 3 && rowDiff == 6)
+            {
+                return true;
+            }
+            
+            // Pattern: 2 columns change, 4 rows change
+            if (colDiff == 2 && rowDiff == 4)
+            {
+                return true;
+            }
+            
+            // Pattern: 4 columns change, 3 rows change
+            if (colDiff == 4 && rowDiff == 3)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 4 rows change
+            if (colDiff == 3 && rowDiff == 4)
+            {
+                return true;
+            }
+            
+            // Pattern: 5 columns change, 7 rows change
+            if (colDiff == 5 && rowDiff == 7)
+            {
+                return true;
+            }
+            
+            // Pattern: 1 column change, 5 rows change
+            if (colDiff == 1 && rowDiff == 5)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 5 rows change (L10 to J5)
+            if (colDiff == 3 && rowDiff == 5)
+            {
+                return true;
+            }
+            
+            // Pattern: 6 columns change, 3 rows change (J9 to D6)
+            if (colDiff == 6 && rowDiff == 3)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 8 rows change (J12 to G4)
+            if (colDiff == 3 && rowDiff == 8)
+            {
+                return true;
+            }
+            
+            // Pattern: 4 columns change, 1 row change (E9 to I10, I10 to E9)
+            if (colDiff == 4 && rowDiff == 1)
+            {
+                return true;
+            }
+            
+            // Pattern: 1 column change, 1 row change (E9 to F10, I10 to J9)
+            if (colDiff == 1 && rowDiff == 1)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 7 rows change (H10 to E3)
+            if (colDiff == 3 && rowDiff == 7)
+            {
+                return true;
+            }
+            
+            // Pattern: 3 columns change, 2 rows change (F12 to I10)
+            if (colDiff == 3 && rowDiff == 2)
+            {
+                return true;
             }
 
             return false;
