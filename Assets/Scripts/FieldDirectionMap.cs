@@ -149,6 +149,26 @@ namespace Assets.Model.ChessboardMain
                 // Special case: E4 can go to I5
                 moves.Add("I5");
             }
+            // Special case for I, J, K, L columns at row 5
+            else if ((col == 'I' || col == 'J' || col == 'K' || col == 'L') && row == 5)
+            {
+                // They can go to number 9 from 5, keeping the same letter
+                string jumpMove = $"{col}9";
+                if (IsValidPosition(jumpMove))
+                {
+                    moves.Add(jumpMove);
+                }
+            }
+            // For I, J, K, L columns after row 9, they start increasing
+            else if ((col == 'I' || col == 'J' || col == 'K' || col == 'L') && row >= 9)
+            {
+                // Move forward by increasing the row number
+                string forwardMove = $"{col}{row + 1}";
+                if (IsValidPosition(forwardMove))
+                {
+                    moves.Add(forwardMove);
+                }
+            }
             else
             {
                 // Regular move: same letter, decrease number
@@ -178,11 +198,25 @@ namespace Assets.Model.ChessboardMain
             List<string> moves = new List<string>();
             List<string> captures = new List<string>();
 
-            // Regular move: same letter, increase number
-            string forwardMove = $"{col}{row + 1}";
-            if (IsValidPosition(forwardMove))
+            // Special case exceptions
+            if (position == "D4")
             {
-                moves.Add(forwardMove);
+                // Special case: D4 can go to I9
+                moves.Add("I9");
+            }
+            else if (position == "E4")
+            {
+                // Special case: E4 can go to I5
+                moves.Add("I5");
+            }
+            else
+            {
+                // Regular move: same letter, increase number
+                string forwardMove = $"{col}{row + 1}";
+                if (IsValidPosition(forwardMove))
+                {
+                    moves.Add(forwardMove);
+                }
             }
 
             // Store the moves
@@ -214,6 +248,44 @@ namespace Assets.Model.ChessboardMain
             {
                 // Special case: E9 can go to D5
                 moves.Add("D5");
+            }
+            // Special case for I, J, K, L, E, F, G, H columns at row 9
+            else if ((col >= 'E' && col <= 'H' || col >= 'I' && col <= 'L') && row == 9)
+            {
+                // For I, J, K, L columns, they can go to number 4 for E, F, G, H
+                if (col >= 'I' && col <= 'L')
+                {
+                    char newCol = (char)('E' + (col - 'I')); // Map I->E, J->F, K->G, L->H
+                    if (newCol >= 'E' && newCol <= 'H') // Safety check
+                    {
+                        string jumpMove = $"{newCol}4";
+                        if (IsValidPosition(jumpMove))
+                        {
+                            moves.Add(jumpMove);
+                        }
+                    }
+                }
+                
+                // For E, F, G, H columns, they can go to number 4 for I, J, K, L
+                if (col >= 'E' && col <= 'H')
+                {
+                    char newCol = (char)('I' + (col - 'E')); // Map E->I, F->J, G->K, H->L
+                    if (newCol >= 'I' && newCol <= 'L') // Safety check
+                    {
+                        string jumpMove = $"{newCol}4";
+                        if (IsValidPosition(jumpMove))
+                        {
+                            moves.Add(jumpMove);
+                        }
+                    }
+                }
+                
+                // They can also go to number 5 for the same letter
+                string sameColMove = $"{col}5";
+                if (IsValidPosition(sameColMove))
+                {
+                    moves.Add(sameColMove);
+                }
             }
             else
             {
