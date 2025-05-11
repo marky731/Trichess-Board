@@ -1,37 +1,35 @@
-﻿//PieceMover sınıfı, satranç taşlarının hareketini yöneten ve kontrol eden bir sınıftır.
-//Bu sınıf, taşların geçerli bir hamle yapıp yapmadığını kontrol eder, taşı hareket ettirir ve oyuncuların sırasını değiştirir.
-//MovePiece metoduyla:
-//Kaynak ve hedef kareleri alır.
-//Hedef karede bir taş varsa, o taşı alır (yemek için).
-//Yeni bir Move nesnesi oluşturur ve hamlenin geçerliliğini MoveValidator ile kontrol eder.
-//Eğer hamle geçerliyse, taşı yeni konumuna taşır ve TurnManager ile sıradaki oyuncuya geçer.
-
 using Assets.Model;
 using Assets.Model.ChessboardMain.Pieces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Controller
 {
-    public class PieceMover : MonoBehaviour
+    public class NameBasedPieceMover : MonoBehaviour
     {
-        // Taş hareketlerini doğrulayan sınıf
-        private MoveValidator moveValidator;
+        // Name-based move validator
+        private NameBasedMoveValidator moveValidator;
 
-        // Sıra yöneticisini kontrol eden sınıf
+        // Turn manager
         private TurnManager turnManager;
 
-        // Tahtayı yöneten sınıf
+        // Board
         private Board board;
 
-        // Başlangıçta gerekli bileşenleri bulur ve başlatır
+        // Initialize components
         void Start()
         {
-            moveValidator = FindFirstObjectByType<MoveValidator>();
+            moveValidator = FindFirstObjectByType<NameBasedMoveValidator>();
+            
+            // If the validator doesn't exist, create it
+            if (moveValidator == null)
+            {
+                Debug.LogWarning("NameBasedMoveValidator not found! Creating one...");
+                GameObject validatorObj = new GameObject("NameBasedMoveValidator");
+                moveValidator = validatorObj.AddComponent<NameBasedMoveValidator>();
+            }
+            
             // Use the singleton instance if available
             turnManager = TurnManager.Instance;
             if (turnManager == null)
@@ -39,12 +37,13 @@ namespace Assets.Controller
                 turnManager = FindFirstObjectByType<TurnManager>();
                 Debug.LogWarning("TurnManager.Instance was null, found instance through FindFirstObjectByType");
             }
+            
             board = FindFirstObjectByType<Board>();
             
-            Debug.Log("PieceMover initialized");
+            Debug.Log("NameBasedPieceMover initialized");
         }
 
-        // Taşın hareketini gerçekleştiren ana metod
+        // Move a piece to a target position
         public void MovePiece(Piece piece, string targetPosition)
         {
             Debug.Log($"MovePiece called: Moving {piece.GetType().Name} from {piece.position} to {targetPosition}");
@@ -80,110 +79,46 @@ namespace Assets.Controller
                 }
             }
             
-            // 1. Taşın mevcut pozisyonu (kaynak alan) alınır
-            Field sourceField = null;
-            try
+            // Get the source position
+            string sourcePosition = piece.position;
+            
+            // If piece.position is null or empty, try to find the current position
+            if (string.IsNullOrEmpty(sourcePosition))
             {
-                // If piece.position is null or empty, try to find the current position
-                if (string.IsNullOrEmpty(piece.position))
+                Debug.LogWarning("Piece position is null or empty. Trying to determine current position...");
+                
+                // Find the current position based on the GameObject's transform
+                sourcePosition = FindClosestBoardPosition(board, piece.GameObject.transform.position);
+                if (sourcePosition != null)
                 {
-                    Debug.LogWarning("Piece position is null or empty. Trying to determine current position...");
-                    
-                    // Find the current position based on the GameObject's transform
-                    string currentPosition = FindClosestBoardPosition(board, piece.GameObject.transform.position);
-                    if (currentPosition != null)
-                    {
-                        // Update the piece's position property
-                        piece.position = currentPosition;
-                        Debug.Log($"Updated piece position to: {currentPosition}");
-                    }
-                    else
-                    {
-                        Debug.LogError("Could not determine the current position of the piece!");
-                        return;
-                    }
+                    // Update the piece's position property
+                    piece.position = sourcePosition;
+                    Debug.Log($"Updated piece position to: {sourcePosition}");
                 }
-                
-                sourceField = board.GetField(piece.position);
-                Debug.Log($"Source field: {(sourceField != null ? piece.position : "null")}");
-                
-                if (sourceField == null)
+                else
                 {
-                    Debug.LogError($"Source field is null for position: {piece.position}");
+                    Debug.LogError("Could not determine the current position of the piece!");
                     return;
                 }
             }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error getting source field: {e.Message}");
-                return;
-            }
-
-            // 2. Hedef pozisyonu (hedef alan) alınır, targetPosition string olduğu için Field objesine dönüştürülür
-            Field targetField = null;
-            try
-            {
-                targetField = board.GetField(targetPosition);
-                Debug.Log($"Target field: {(targetField != null ? targetPosition : "null")}");
-                
-                if (targetField == null)
-                {
-                    Debug.LogError($"Target field is null for position: {targetPosition}");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error getting target field: {e.Message}");
-                return;
-            }
-
-            // 3. Hedef karede taş varsa (yemek için), o taşı al
-            Piece takenPiece = null;
-            try
-            {
-                takenPiece = (Piece)targetField.OccupiedPiece;
-                if (takenPiece != null)
-                {
-                    Debug.Log($"Taking piece: {takenPiece.GetType().Name}");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error getting taken piece: {e.Message}");
-                // Continue anyway, as taking a piece is optional
-            }
-
-            // 4. Yeni bir Move nesnesi oluşturulur, bu hamleyi temsil eder
-            Move move = null;
-            try
-            {
-                move = new Move(sourceField, piece, targetField, takenPiece);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error creating Move object: {e.Message}");
-                return;
-            }
-
-            // 5. Hamlenin geçerli olup olmadığı MoveValidator ile kontrol edilir
-            // Enable move validation for proper chess rules
-            bool skipValidation = false; // Validation is now enabled
+            
+            // Validate the move using the name-based validator
+            bool skipValidation = false; // Validation is enabled
             if (moveValidator != null && !skipValidation)
             {
                 try
                 {
-                    Debug.Log($"Validating move from {piece.position} to {targetPosition}...");
-                    if (!moveValidator.IsValidMove(piece, move))
+                    Debug.Log($"Validating move from {sourcePosition} to {targetPosition}...");
+                    if (!moveValidator.IsValidMove(piece, sourcePosition, targetPosition))
                     {
-                        Debug.LogError($"Invalid move from {piece.position} to {targetPosition}! The move does not comply with chess rules.");
+                        Debug.LogError($"Invalid move from {sourcePosition} to {targetPosition}! The move does not comply with chess rules.");
                         
                         // Prevent invalid moves
-                        return; // This line is now uncommented to prevent invalid moves
+                        return;
                     }
                     else
                     {
-                        Debug.Log($"Move from {piece.position} to {targetPosition} is valid.");
+                        Debug.Log($"Move from {sourcePosition} to {targetPosition} is valid.");
                     }
                 }
                 catch (Exception e)
@@ -197,25 +132,14 @@ namespace Assets.Controller
             {
                 if (moveValidator == null)
                 {
-                    Debug.LogWarning("MoveValidator is null! Trying to find it...");
-                    moveValidator = FindFirstObjectByType<MoveValidator>();
+                    Debug.LogWarning("NameBasedMoveValidator is null! Trying to find it...");
+                    moveValidator = FindFirstObjectByType<NameBasedMoveValidator>();
                     
                     if (moveValidator == null)
                     {
-                        Debug.LogError("Could not find MoveValidator component! Creating one...");
-                        GameObject validatorObj = new GameObject("MoveValidator");
-                        moveValidator = validatorObj.AddComponent<MoveValidator>();
-                        
-                        // Try to initialize the MoveValidator
-                        Board boardComponent = FindFirstObjectByType<Board>();
-                        if (boardComponent != null)
-                        {
-                            Debug.Log("Found Board component. Waiting for it to initialize MoveValidator...");
-                        }
-                        else
-                        {
-                            Debug.LogError("Could not find Board component! Move validation will not work properly.");
-                        }
+                        Debug.LogError("Could not find NameBasedMoveValidator component! Creating one...");
+                        GameObject validatorObj = new GameObject("NameBasedMoveValidator");
+                        moveValidator = validatorObj.AddComponent<NameBasedMoveValidator>();
                     }
                 }
                 
@@ -224,15 +148,32 @@ namespace Assets.Controller
                     Debug.LogWarning("Validation is skipped. This should be enabled in production.");
                 }
             }
-
-            // 6. Taşı yeni konumuna taşır, GameObject'inin pozisyonunu günceller
+            
+            // Get the source and target fields
+            Field sourceField = board.GetField(sourcePosition);
+            Field targetField = board.GetField(targetPosition);
+            
+            if (sourceField == null || targetField == null)
+            {
+                Debug.LogError($"Source or target field is null! Source: {sourcePosition}, Target: {targetPosition}");
+                return;
+            }
+            
+            // Check if there's a piece at the target position
+            Piece takenPiece = targetField.OccupiedPiece;
+            if (takenPiece != null)
+            {
+                Debug.Log($"Taking piece: {takenPiece.GetType().Name}");
+            }
+            
+            // Move the piece
             try
             {
                 Vector2 newPosition = board.GetPosition(targetPosition);
                 Debug.Log($"Moving piece to position: ({newPosition.x}, {newPosition.y})");
                 
                 // Use the Board.MovePiece method to update the fields
-                bool moveSuccess = board.MovePiece(piece, piece.position, targetPosition);
+                bool moveSuccess = board.MovePiece(piece, sourcePosition, targetPosition);
                 
                 if (!moveSuccess)
                 {
@@ -257,11 +198,11 @@ namespace Assets.Controller
                 Debug.LogError($"Error moving piece: {e.Message}");
                 return;
             }
-
+            
             // Track if the move was successful
             bool moveSuccessful = true;
             
-            // 7. Sıradaki oyuncuya geçiş yapılır - only if the move was successful
+            // Advance to the next player's turn
             if (moveSuccessful && turnManager != null)
             {
                 try
@@ -333,7 +274,7 @@ namespace Assets.Controller
             // Only return if the closest position is within a reasonable distance
             if (closestDistance <= 2.0f)
             {
-                Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+                // Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
                 return closestPosition;
             }
             

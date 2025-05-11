@@ -89,6 +89,13 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Add the ValidationSystemInitializerAdder component to ensure the name-based validation system is used
+            if (GetComponent<NameBasedValidationInitializer>() == null)
+            {
+                gameObject.AddComponent<NameBasedValidationInitializer>();
+                Debug.Log("Added ValidationSystemInitializerAdder to GameManager");
+            }
         }
         else
         {
@@ -674,7 +681,7 @@ public class GameManager : MonoBehaviour
         // Only return if the closest position is within the specified threshold
         if (closestDistance <= threshold)
         {
-            Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+            // Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
             return closestPosition;
         }
         

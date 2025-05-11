@@ -27,7 +27,7 @@ public class PieceSelector : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0)) // Sol tıklama kontrolü
         {
-            Debug.Log("Mouse clicked at screen position: " + Input.mousePosition);
+            // Debug.Log("Mouse clicked at screen position: " + Input.mousePosition);
             
             // Check if camera is available
             if (Camera.main == null)
@@ -37,7 +37,7 @@ public class PieceSelector : MonoBehaviour
             }
             
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log("Converted to world position: " + mousePos);
+            // Debug.Log("Converted to world position: " + mousePos);
             
             // Perform raycast and log result
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);

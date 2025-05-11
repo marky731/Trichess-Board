@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BoardClickHandlerAttacher : MonoBehaviour
+public class NameBasedBoardClickHandlerAttacher : MonoBehaviour
 {
     void Start()
     {
@@ -15,12 +15,12 @@ public class BoardClickHandlerAttacher : MonoBehaviour
         
         GameObject boardObject = boardComponent.gameObject;
         
-        // Check if the board already has a BoardClickHandler component
-        if (boardObject.GetComponent<BoardClickHandler>() == null)
+        // Check if the board already has a NameBasedBoardClickHandler component
+        if (boardObject.GetComponent<NameBasedBoardClickHandler>() == null)
         {
-            // Add the BoardClickHandler component to the board
-            boardObject.AddComponent<BoardClickHandler>();
-            Debug.Log("BoardClickHandler component added to the board GameObject.");
+            // Add the NameBasedBoardClickHandler component to the board
+            boardObject.AddComponent<NameBasedBoardClickHandler>();
+            Debug.Log("NameBasedBoardClickHandler component added to the board GameObject.");
             
             // Make sure the board has a collider for click detection
             if (boardObject.GetComponent<Collider2D>() == null)
@@ -32,7 +32,8 @@ public class BoardClickHandlerAttacher : MonoBehaviour
         }
         else
         {
-            Debug.Log("BoardClickHandler component already exists on the board GameObject.");
+            Debug.Log("NameBasedBoardClickHandler component already exists on the board GameObject.");
         }
+        
     }
 }

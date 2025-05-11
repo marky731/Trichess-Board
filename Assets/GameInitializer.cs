@@ -8,12 +8,12 @@ public class GameInitializer : MonoBehaviour
         Debug.Log("GameInitializer Awake called");
         
         // Check if BoardClickHandlerAttacher already exists
-        BoardClickHandlerAttacher existingAttacher = FindFirstObjectByType<BoardClickHandlerAttacher>();
+        NameBasedBoardClickHandlerAttacher existingAttacher = FindFirstObjectByType<NameBasedBoardClickHandlerAttacher>();
         if (existingAttacher == null)
         {
             // Add the BoardClickHandlerAttacher to the scene
             GameObject attacher = new GameObject("BoardClickHandlerAttacher");
-            attacher.AddComponent<BoardClickHandlerAttacher>();
+            attacher.AddComponent<NameBasedBoardClickHandlerAttacher>();
             Debug.Log("BoardClickHandlerAttacher added to the scene.");
         }
         else
@@ -22,12 +22,12 @@ public class GameInitializer : MonoBehaviour
         }
         
         // Check if PieceMover already exists
-        PieceMover existingPieceMover = FindFirstObjectByType<PieceMover>();
+        NameBasedPieceMover existingPieceMover = FindFirstObjectByType<NameBasedPieceMover>();
         if (existingPieceMover == null)
         {
             // Add the PieceMover to the scene
             GameObject pieceMoverObj = new GameObject("PieceMover");
-            pieceMoverObj.AddComponent<PieceMover>();
+            pieceMoverObj.AddComponent<NameBasedPieceMover>();
             Debug.Log("PieceMover added to the scene.");
         }
         else
@@ -36,12 +36,12 @@ public class GameInitializer : MonoBehaviour
         }
         
         // Check if MoveValidator already exists
-        MoveValidator existingMoveValidator = FindFirstObjectByType<MoveValidator>();
+        NameBasedMoveValidator existingMoveValidator = FindFirstObjectByType<NameBasedMoveValidator>();
         if (existingMoveValidator == null)
         {
             // Add the MoveValidator to the scene
             GameObject moveValidatorObj = new GameObject("MoveValidator");
-            moveValidatorObj.AddComponent<MoveValidator>();
+            moveValidatorObj.AddComponent<NameBasedMoveValidator>();
             Debug.Log("MoveValidator added to the scene.");
         }
         else

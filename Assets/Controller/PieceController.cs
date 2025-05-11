@@ -116,7 +116,7 @@ public class PieceController : MonoBehaviour
         // Only return if the closest position is within a reasonable distance
         if (closestDistance <= 2.0f)
         {
-            Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+            // Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
             return closestPosition;
         }
         

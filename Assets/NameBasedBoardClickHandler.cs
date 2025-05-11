@@ -2,16 +2,16 @@ using UnityEngine;
 using Assets.Model.ChessboardMain.Pieces;
 using Assets.Controller;
 
-public class BoardClickHandler : MonoBehaviour
+public class NameBasedBoardClickHandler : MonoBehaviour
 {
     private Board board;
-    private PieceMover pieceMover;
+    private NameBasedPieceMover pieceMover;
     private BoxCollider2D boardCollider;
 
     void Start()
     {
         board = FindFirstObjectByType<Board>();
-        pieceMover = FindFirstObjectByType<PieceMover>();
+        pieceMover = FindFirstObjectByType<NameBasedPieceMover>();
         
         if (board == null)
         {
@@ -20,7 +20,9 @@ public class BoardClickHandler : MonoBehaviour
         
         if (pieceMover == null)
         {
-            Debug.LogError("PieceMover not found!");
+            Debug.LogWarning("NameBasedPieceMover not found! Creating one...");
+            GameObject pieceMoverObj = new GameObject("NameBasedPieceMover");
+            pieceMover = pieceMoverObj.AddComponent<NameBasedPieceMover>();
         }
         
         // Add a BoxCollider2D to the board if it doesn't have one
@@ -32,6 +34,8 @@ public class BoardClickHandler : MonoBehaviour
             boardCollider.size = new Vector2(10, 10); // Adjust size as needed
             Debug.Log("Added BoxCollider2D to the board");
         }
+        
+        Debug.Log("NameBasedBoardClickHandler initialized");
     }
 
     void OnMouseDown()
@@ -47,7 +51,7 @@ public class BoardClickHandler : MonoBehaviour
         Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         clickPosition.z = 0; // Ensure z is 0 for 2D
 
-        Debug.Log($"Board clicked at position: {clickPosition}");
+        // Debug.Log($"Board clicked at position: {clickPosition}");
 
         // Check if board is not null
         if (board == null)
@@ -98,19 +102,26 @@ public class BoardClickHandler : MonoBehaviour
                 // Check if pieceMover is not null
                 if (pieceMover == null)
                 {
-                    Debug.LogWarning("PieceMover is null! Trying to find it...");
-                    pieceMover = FindFirstObjectByType<Assets.Controller.PieceMover>();
+                    Debug.LogWarning("NameBasedPieceMover is null! Trying to find it...");
+                    pieceMover = FindFirstObjectByType<NameBasedPieceMover>();
+                    
+                    if (pieceMover == null)
+                    {
+                        Debug.LogWarning("NameBasedPieceMover not found! Creating one...");
+                        GameObject pieceMoverObj = new GameObject("NameBasedPieceMover");
+                        pieceMover = pieceMoverObj.AddComponent<NameBasedPieceMover>();
+                    }
                 }
                 
                 if (pieceMover != null)
                 {
-                    // Move the piece using PieceMover
+                    // Move the piece using NameBasedPieceMover
                     pieceMover.MovePiece(selectedPiece, targetPosition);
                 }
                 else
                 {
                     // Fallback: Move the piece directly
-                    Debug.LogWarning("PieceMover not found! Moving piece directly.");
+                    Debug.LogWarning("NameBasedPieceMover not found! Moving piece directly.");
                     Vector2 newPosition = board.GetPosition(targetPosition);
                     selectedPiece.GameObject.transform.position = new Vector3(newPosition.x, newPosition.y, selectedPiece.GameObject.transform.position.z);
                     Debug.Log($"Moved piece directly to {targetPosition}");
@@ -119,8 +130,8 @@ public class BoardClickHandler : MonoBehaviour
                 // Unselect the piece after moving
                 GameManager.Instance.UnselectCurrentPiece();
                 
-                // NOTE: We don't advance the turn here anymore because PieceMover.MovePiece already does that
-                // This prevents the turn from being advanced twice, which was causing the turn to go back to the previous player
+                // NOTE: We don't advance the turn here because NameBasedPieceMover.MovePiece already does that
+                // This prevents the turn from being advanced twice, which would cause the turn to go back to the previous player
             }
             else
             {
@@ -164,7 +175,7 @@ public class BoardClickHandler : MonoBehaviour
         // Increased threshold to 2.0 units to make it easier to click
         if (closestDistance <= 2.0f)
         {
-            Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
+            // Debug.Log($"Found position {closestPosition} at distance {closestDistance}");
             return closestPosition;
         }
         

@@ -170,12 +170,6 @@ public class Board : MonoBehaviour
             return false;
         }
         
-        // Check if the source field contains the piece
-        if (sourceField.OccupiedPiece != piece)
-        {
-            Debug.LogError($"Source field does not contain the specified piece! Expected {piece.GetType().Name} but found {(sourceField.OccupiedPiece != null ? sourceField.OccupiedPiece.GetType().Name : "null")}");
-            return false;
-        }
         
         // Check if the target field is already occupied
         if (targetField.OccupiedPiece != null)
@@ -214,7 +208,7 @@ public class Board : MonoBehaviour
         return null; 
     }
 
-    private MoveValidator _validator;
+    private NameBasedMoveValidator _validator;
     
     private Chessboard _chessboard;
     
@@ -234,13 +228,13 @@ public class Board : MonoBehaviour
         }
         
         // Find the MoveValidator component
-        _validator = FindFirstObjectByType<MoveValidator>();
+        _validator = FindFirstObjectByType<NameBasedMoveValidator>();
         
         if (_validator == null)
         {
             Debug.LogError("MoveValidator not found! Creating one...");
             GameObject validatorObj = new GameObject("MoveValidator");
-            _validator = validatorObj.AddComponent<MoveValidator>();
+            _validator = validatorObj.AddComponent<NameBasedMoveValidator>();
         }
         
         // Set the Chessboard reference in the MoveValidator
@@ -287,7 +281,17 @@ public class Board : MonoBehaviour
         
         try
         {
-            return _validator.IsValidMove(piece, move);
+            // Extract source and target positions from the Move object
+            string sourcePosition = FindPositionForField(move.Source);
+            string targetPosition = FindPositionForField(move.Destination);
+            
+            if (sourcePosition == null || targetPosition == null)
+            {
+                Debug.LogError("Could not find position for source or target field!");
+                return false;
+            }
+            
+            return _validator.IsValidMove(piece, sourcePosition, targetPosition);
         }
         catch (System.Exception e)
         {
@@ -295,6 +299,28 @@ public class Board : MonoBehaviour
             // Return true during initialization to avoid breaking the setup
             return true;
         }
+    }
+    
+    // Find the position for a field
+    private string FindPositionForField(Field field)
+    {
+        if (field == null)
+        {
+            Debug.LogError("Field is null in FindPositionForField!");
+            return null;
+        }
+        
+        foreach (var kvp in fields)
+        {
+            Field f = kvp.Value;
+            if (Math.Abs(f.X - field.X) < 0.01 && Math.Abs(f.Y - field.Y) < 0.01)
+            {
+                return kvp.Key;
+            }
+        }
+        
+        Debug.LogError($"Could not find position for field at ({field.X}, {field.Y})!");
+        return null;
     }
 
     private bool IsKingInCheck(Piece king, Board board)

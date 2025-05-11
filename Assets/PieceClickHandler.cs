@@ -17,41 +17,4 @@ public class PieceClickHandler : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
-    {
-        Debug.Log("Taş tıklandı: " + gameObject.name);
-
-        // Sıra bu oyuncudaysa seçilebilir
-        if (GameManager.Instance.CurrentPlayerId == playerId)
-        {
-            Debug.Log("Taş seçildi: " + gameObject.name);
-            SelectThisPiece();
-        }
-        else
-        {
-            Debug.Log("Bu taş sana ait değil.");
-        }
-    }
-
-    private void SelectThisPiece()
-    {
-        // Daha önce seçilmiş taş varsa, onun ışığını kapat
-        if (currentlySelectedPiece != null && currentlySelectedPiece != gameObject)
-        {
-            Light previousLight = currentlySelectedPiece.GetComponentInChildren<Light>();
-            if (previousLight != null)
-            {
-                previousLight.enabled = false;
-            }
-        }
-
-        // Bu taşın ışığını aç
-        if (selectionLight != null)
-        {
-            selectionLight.enabled = true;
-        }
-
-        // Bu taşı seçili olarak kaydet
-        currentlySelectedPiece = gameObject;
-    }
 }
