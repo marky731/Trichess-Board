@@ -482,7 +482,7 @@ namespace Assets.Model.ChessboardMain
         }
 
         /// <summary>
-        /// Check if two positions are in a straight line (horizontal, vertical, or one diagonal in hexagonal chess).
+        /// Check if two positions are in a straight line (horizontal, vertical, or special cases in hexagonal chess).
         /// </summary>
         private bool IsInStraightLine(string position1, string position2)
         {
@@ -499,9 +499,28 @@ namespace Assets.Model.ChessboardMain
             // Same row
             if (row1 == row2) return true;
 
-            // Third diagonal in hexagonal grid (northeast/southwest)
-            if (Math.Abs(col2 - col1) == Math.Abs(row2 - row1)) return true;
+            // Special case 1: I(5,6,7,8) to E(1,2,3,4)
+            if ((col1 == 'I' && col2 == 'E' && row1 >= 5 && row1 <= 8 && row2 >= 1 && row2 <= 4) ||
+                (col1 == 'E' && col2 == 'I' && row1 >= 1 && row1 <= 4 && row2 >= 5 && row2 <= 8))
+            {
+                return true;
+            }
 
+            // Special case 2: I(9,10,11,12) to D(1,2,3,4)
+            if ((col1 == 'I' && col2 == 'D' && row1 >= 9 && row1 <= 12 && row2 >= 1 && row2 <= 4) ||
+                (col1 == 'D' && col2 == 'I' && row1 >= 1 && row1 <= 4 && row2 >= 9 && row2 <= 12))
+            {
+                return true;
+            }
+
+            // Special case 3: D(5,6,7,8) to E(9,10,11,12)
+            if ((col1 == 'D' && col2 == 'E' && row1 >= 5 && row1 <= 8 && row2 >= 9 && row2 <= 12) ||
+                (col1 == 'E' && col2 == 'D' && row1 >= 9 && row1 <= 12 && row2 >= 5 && row2 <= 8))
+            {
+                return true;
+            }
+
+            // No other diagonal movements are allowed for rooks
             return false;
         }
 
