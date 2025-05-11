@@ -441,6 +441,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &907689261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 907689263}
+  - component: {fileID: 907689262}
+  - component: {fileID: 907689264}
+  m_Layer: 0
+  m_Name: AIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &907689262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907689261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0e451feebdd24a4fb8ab0086158331b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boardStateJson: "\r{\n  \"A1\": \"gray_rook\",\r\n  \"B1\": \"gray_knight\",\r\n 
+    \"C1\": \"gray_bishop\",\r\n  \"D1\": \"gray_queen\",\r\n  \"E1\": \"gray_king\",\r\n 
+    \"F1\": \"gray_bishop\",\r\n  \"G1\": \"gray_knight\",\r\n  \"H1\": \"gray_rook\",\r\n 
+    \"A2\": \"gray_pawn\",\r\n  \"B2\": \"gray_pawn\",\r\n  \"C2\": \"gray_pawn\",\r\n 
+    \"D2\": \"gray_pawn\",\r\n  \"E2\": \"gray_pawn\",\r\n  \"F2\": \"gray_pawn\",\r\n 
+    \"G2\": \"gray_pawn\",\r\n  \"H2\": \"gray_pawn\"\r\n\r}\n"
+  currentTurn: gray
+--- !u!4 &907689263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907689261}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &907689264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907689261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a81cc99dd4addb4d948e259fdf25334, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1526083611
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,3 +626,4 @@ SceneRoots:
   - {fileID: 366254701}
   - {fileID: 1526083613}
   - {fileID: 665182002}
+  - {fileID: 907689263}

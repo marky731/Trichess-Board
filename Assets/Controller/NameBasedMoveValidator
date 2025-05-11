@@ -1,0 +1,342 @@
+using Assets.Model.ChessboardMain.Pieces;
+using Assets.Model;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Assets.Model.ChessboardMain.Pieces.Assets.Model.ChessboardMain.Pieces;
+using Assets.Model.ChessboardMain.Pieces.Pawn;
+using Assets.Model.ChessboardMain;
+
+namespace Assets.Controller
+{
+    public class NameBasedMoveValidator : MonoBehaviour
+    {
+        // Reference to the chessboard
+        private Chessboard _chessboard;
+        
+        // Reference to the board
+        private Board _board;
+
+        // Dictionary to store the board state (position -> piece)
+        private Dictionary<string, Piece> _boardState = new Dictionary<string, Piece>();
+
+        void Awake()
+        {
+            Debug.Log("NameBasedMoveValidator Awake called.");
+        }
+
+        void Start()
+        {
+            Debug.Log("NameBasedMoveValidator Start called.");
+            
+            // Find the Board component
+            _board = FindFirstObjectByType<Board>();
+            
+            if (_board == null)
+            {
+                Debug.LogError("Board not found in NameBasedMoveValidator!");
+            }
+            
+            // Check if _chessboard is null
+            if (_chessboard == null)
+            {
+                Debug.LogWarning("Chessboard is null in NameBasedMoveValidator. Move validation will not work properly.");
+            }
+        }
+
+        // Set the Chessboard reference after instantiation
+        public void SetChessboard(Chessboard chessboard)
+        {
+            _chessboard = chessboard ?? throw new ArgumentNullException(nameof(chessboard));
+            Debug.Log("Chessboard set in NameBasedMoveValidator.");
+        }
+
+        // Update the board state
+        private void UpdateBoardState()
+        {
+            _boardState.Clear();
+            
+            if (_board == null)
+            {
+                Debug.LogError("Board is null in UpdateBoardState!");
+                return;
+            }
+            
+            // Get all positions
+            List<string> positions = _board.GetAllPositions();
+            
+            foreach (string position in positions)
+            {
+                Field field = _board.GetField(position);
+                if (field != null && field.OccupiedPiece != null)
+                {
+                    _boardState[position] = field.OccupiedPiece;
+                }
+            }
+            
+            Debug.Log($"Board state updated with {_boardState.Count} pieces.");
+        }
+
+        // Main validation method
+        public bool IsValidMove(Piece piece, string sourcePosition, string targetPosition)
+        {
+            Debug.Log($"Validating move from {sourcePosition} to {targetPosition} for piece {piece.GetType().Name}");
+            
+            // Update the board state
+            UpdateBoardState();
+            
+            // Check if the source and target positions are the same
+            if (sourcePosition == targetPosition)
+            {
+                Debug.Log("Validation failed: Source and target positions are the same");
+                return false;
+            }
+            
+            // Check if the target position is within the board
+            if (!IsPositionOnBoard(targetPosition))
+            {
+                Debug.Log("Validation failed: Target position is not on the board");
+                return false;
+            }
+            
+            // Check if the player is moving their own piece
+            if (!IsPlayerMovingOwnPiece(piece))
+            {
+                Debug.Log($"Validation failed: Player is not moving their own piece. Piece PlayerId: {piece.PlayerId}, Current player: {GetCurrentPlayerId()}");
+                return false;
+            }
+            
+            // Check if the move is valid for the piece type
+            if (!IsMoveValidForPieceType(piece, sourcePosition, targetPosition))
+            {
+                Debug.Log($"Validation failed: Move is not valid for {piece.GetType().Name}");
+                return false;
+            }
+            
+            // Check if the path is clear
+            if (!IsPathClear(sourcePosition, targetPosition))
+            {
+                Debug.Log("Validation failed: Path is not clear");
+                return false;
+            }
+            
+            // Check if the target position is occupied by a friendly piece
+            if (IsPositionOccupiedByFriendlyPiece(targetPosition, piece.PlayerId))
+            {
+                Debug.Log("Validation failed: Target position is occupied by a friendly piece");
+                return false;
+            }
+            
+            // Check if the king would be in check after the move
+            if (WouldKingBeInCheckAfterMove(piece, sourcePosition, targetPosition))
+            {
+                Debug.Log("Validation failed: King would be in check after move");
+                return false;
+            }
+            
+            Debug.Log("All validation checks passed - move is valid");
+            return true;
+        }
+
+        // Check if a position is on the board
+        private bool IsPositionOnBoard(string position)
+        {
+            return _board.GetAllPositions().Contains(position);
+        }
+
+        // Check if the player is moving their own piece
+        private bool IsPlayerMovingOwnPiece(Piece piece)
+        {
+            int currentPlayer = GetCurrentPlayerId();
+            return piece.PlayerId == currentPlayer;
+        }
+
+        // Get the current player ID
+        private int GetCurrentPlayerId()
+        {
+            // Try to get the current player from TurnManager.Instance
+            if (TurnManager.Instance != null)
+            {
+                return TurnManager.Instance.currentPlayer;
+            }
+            
+            // Fallback to _chessboard.CurrentPlayerColor
+            if (_chessboard != null)
+            {
+                // Convert color to player ID (assuming White=1, Gray=2, Black=3)
+                if (_chessboard.CurrentPlayerColor == PieceColor.White)
+                    return 1;
+                else if (_chessboard.CurrentPlayerColor == PieceColor.Gray)
+                    return 2;
+                else if (_chessboard.CurrentPlayerColor == PieceColor.Black)
+                    return 3;
+            }
+            
+            // Default to player 1
+            Debug.LogWarning("Could not determine current player, defaulting to Player 1");
+            return 1;
+        }
+
+        // Field direction map for move validation
+        private FieldDirectionMap _fieldDirectionMap;
+
+        // Check if a move is valid for the piece type
+        private bool IsMoveValidForPieceType(Piece piece, string sourcePosition, string targetPosition)
+        {
+            // Initialize the field direction map if it's null
+            if (_fieldDirectionMap == null)
+            {
+                _fieldDirectionMap = FieldDirectionMap.Instance;
+                _fieldDirectionMap.Initialize(_board);
+                Debug.Log("Initialized FieldDirectionMap in NameBasedMoveValidator");
+            }
+            
+            // Get the piece type
+            Type pieceType = piece.GetType();
+            
+            // Check if the target position is occupied (for capture)
+            bool isCapture = IsPositionOccupied(targetPosition) && !IsPositionOccupiedByFriendlyPiece(targetPosition, piece.PlayerId);
+            
+            // Check the piece type and call the appropriate validation method
+            if (pieceType == typeof(Rook))
+                return _fieldDirectionMap.IsValidRookMove(sourcePosition, targetPosition);
+            else if (pieceType == typeof(Bishop))
+                return _fieldDirectionMap.IsValidBishopMove(sourcePosition, targetPosition);
+            else if (pieceType == typeof(Knight))
+                return _fieldDirectionMap.IsValidKnightMove(sourcePosition, targetPosition);
+            else if (pieceType == typeof(Queen))
+                return _fieldDirectionMap.IsValidQueenMove(sourcePosition, targetPosition);
+            else if (pieceType == typeof(King))
+                return _fieldDirectionMap.IsValidKingMove(sourcePosition, targetPosition);
+            else if (pieceType.IsSubclassOf(typeof(Pawn)))
+            {
+                // Get the valid moves for this pawn
+                List<string> validMoves = _fieldDirectionMap.GetPawnMoves(sourcePosition, piece.PlayerId);
+                
+                // Check if the target position is in the list of valid moves
+                if (validMoves.Contains(targetPosition))
+                {
+                    Debug.Log($"Valid pawn move from {sourcePosition} to {targetPosition} for player {piece.PlayerId}");
+                    return true;
+                }
+                
+                Debug.Log($"Invalid pawn move from {sourcePosition} to {targetPosition} for player {piece.PlayerId}. Valid moves: {string.Join(", ", validMoves)}");
+                return false;
+            }
+            
+            Debug.LogError($"Unknown piece type: {pieceType.Name}");
+            return false;
+        }
+
+        // Check if the path is clear
+        private bool IsPathClear(string sourcePosition, string targetPosition)
+        {
+            // Get all positions between source and target
+            List<string> path = GetPathBetween(sourcePosition, targetPosition);
+            
+            // Check if any position in the path is occupied
+            foreach (string position in path)
+            {
+                if (IsPositionOccupied(position))
+                {
+                    Debug.Log($"Path is blocked at position {position}");
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Get all positions between source and target
+        private List<string> GetPathBetween(string sourcePosition, string targetPosition)
+        {
+            List<string> path = new List<string>();
+            
+            // Get the source and target fields
+            Field sourceField = _board.GetField(sourcePosition);
+            Field targetField = _board.GetField(targetPosition);
+            
+            if (sourceField == null || targetField == null)
+            {
+                Debug.LogError($"Could not get fields for positions {sourcePosition} and {targetPosition}");
+                return path;
+            }
+            
+            // Use the Chessboard.GetPath method to get the path
+            if (_chessboard != null)
+            {
+                List<Field> fieldPath = _chessboard.GetPath(sourceField, targetField);
+                
+                // Convert the fields to positions
+                foreach (Field field in fieldPath)
+                {
+                    // Find the position for this field
+                    string position = FindPositionForField(field);
+                    if (position != null)
+                    {
+                        path.Add(position);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Chessboard is null in GetPathBetween!");
+            }
+            
+            return path;
+        }
+
+        // Find the position for a field
+        private string FindPositionForField(Field field)
+        {
+            // Get all positions
+            List<string> positions = _board.GetAllPositions();
+            
+            foreach (string position in positions)
+            {
+                Vector2 pos = _board.GetPosition(position);
+                
+                // Check if the coordinates match
+                if (Math.Abs(pos.x - field.X) < 0.01 && Math.Abs(pos.y - field.Y) < 0.01)
+                {
+                    return position;
+                }
+            }
+            
+            return null;
+        }
+
+        // Check if a position is occupied
+        private bool IsPositionOccupied(string position)
+        {
+            return _boardState.ContainsKey(position);
+        }
+
+        // Check if a position is occupied by a friendly piece
+        private bool IsPositionOccupiedByFriendlyPiece(string position, int playerId)
+        {
+            if (_boardState.TryGetValue(position, out Piece piece))
+            {
+                return piece.PlayerId == playerId;
+            }
+            
+            return false;
+        }
+
+        // Check if the king would be in check after a move
+        private bool WouldKingBeInCheckAfterMove(Piece piece, string sourcePosition, string targetPosition)
+        {
+            // This is a simplified implementation that always returns false for now
+            // In a full implementation, we would:
+            // 1. Make a copy of the current board state
+            // 2. Apply the move to the copy
+            // 3. Find the king of the current player
+            // 4. Check if any opponent piece can capture the king
+            
+            // For now, we'll just log that we're checking and return false
+            Debug.Log($"Checking if king would be in check after move from {sourcePosition} to {targetPosition}");
+            
+            return false; // For now, we'll just return false
+        }
+    }
+}
