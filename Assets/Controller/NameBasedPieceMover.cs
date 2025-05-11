@@ -186,11 +186,19 @@ namespace Assets.Controller
                 
                 Debug.Log($"Piece moved to {targetPosition}");
                 
-                // If there was a piece at the target position, disable or destroy it
+                // If there was a piece at the target position, capture it
                 if (takenPiece != null && takenPiece.GameObject != null)
                 {
-                    Debug.Log($"Disabling taken piece: {takenPiece.GetType().Name}");
+                    Debug.Log($"Capturing piece: {takenPiece.GetType().Name}");
+                    
+                    // Disable the GameObject to make it disappear
                     takenPiece.GameObject.SetActive(false);
+                    
+                    // Remove the piece from the game state
+                    // This is already handled by the Board.MovePiece method which sets targetField.OccupiedPiece = piece
+                    
+                    // You could add additional logic here for tracking captured pieces if needed
+                    // For example, adding to a list of captured pieces for each player
                 }
             }
             catch (Exception e)

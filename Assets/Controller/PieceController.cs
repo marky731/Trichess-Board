@@ -45,6 +45,55 @@ public class PieceController : MonoBehaviour
                 currentPlayerId = GameManager.Instance.CurrentPlayerId;
             }
             
+            // Check if a piece is already selected
+            Piece selectedPiece = GameManager.Instance.GetSelectedPiece();
+            
+            if (selectedPiece != null)
+            {
+                // If a piece is already selected and the clicked piece is an opponent's piece,
+                // treat it as a capture target
+                if (piece.PlayerId != currentPlayerId)
+                {
+                    Debug.Log($"Attempting to capture opponent's piece: {piece.GetType().Name} (Player {piece.PlayerId})");
+                    
+                    // Find the board and the target position
+                    Board boardInstance = FindFirstObjectByType<Board>();
+                    if (boardInstance != null)
+                    {
+                        string targetPosition = FindClosestBoardPosition(boardInstance, transform.position);
+                        if (targetPosition != null)
+                        {
+                            // Get the NameBasedPieceMover to handle the move
+                            Assets.Controller.NameBasedPieceMover pieceMover = FindFirstObjectByType<Assets.Controller.NameBasedPieceMover>();
+                            if (pieceMover != null)
+                            {
+                                // Move the selected piece to the target position (capturing the opponent's piece)
+                                pieceMover.MovePiece(selectedPiece, targetPosition);
+                                
+                                // Unselect the piece after moving
+                                GameManager.Instance.UnselectCurrentPiece();
+                            }
+                            else
+                            {
+                                Debug.LogError("NameBasedPieceMover not found!");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Could not determine the position of the target piece!");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("Board not found!");
+                    }
+                    
+                    return;
+                }
+            }
+            
+            // If no piece is selected or the clicked piece belongs to the current player,
+            // check if it's the current player's turn
             if (piece.PlayerId != currentPlayerId)
             {
                 Debug.Log($"Not your turn! Current player: {currentPlayerId}, Piece belongs to player: {piece.PlayerId}");

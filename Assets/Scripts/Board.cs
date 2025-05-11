@@ -174,7 +174,13 @@ public class Board : MonoBehaviour
         // Check if the target field is already occupied
         if (targetField.OccupiedPiece != null)
         {
-            Debug.Log($"Target field is occupied by {targetField.OccupiedPiece.GetType().Name}. Capturing piece.");
+            Piece capturedPiece = targetField.OccupiedPiece;
+            Debug.Log($"Target field is occupied by {capturedPiece.GetType().Name}. Capturing piece.");
+            
+            // You could add the captured piece to a list of captured pieces here
+            // For example:
+            // if (capturedPieces == null) capturedPieces = new List<Piece>();
+            // capturedPieces.Add(capturedPiece);
         }
         
         // Update the fields
