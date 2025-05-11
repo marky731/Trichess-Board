@@ -524,26 +524,104 @@ namespace Assets.Model.ChessboardMain
             return false;
         }
 
-        /// <summary>
-        /// Check if two positions are in a diagonal line (two of the three diagonals in hexagonal chess).
-        /// </summary>
-        private bool IsInDiagonalLine(string position1, string position2)
+    /// <summary>
+    /// Check if two positions are in a diagonal line (two of the three diagonals in hexagonal chess).
+    /// </summary>
+    private bool IsInDiagonalLine(string position1, string position2)
+    {
+        // Parse the positions
+        if (position1.Length < 2 || position2.Length < 2) return false;
+        char col1 = position1[0];
+        char col2 = position2[0];
+        int row1, row2;
+        if (!int.TryParse(position1.Substring(1), out row1) || !int.TryParse(position2.Substring(1), out row2)) return false;
+
+        // Northwest/Southeast diagonal
+        if ((col2 - col1) == -(row2 - row1)) return true;
+
+        // Northeast/Southwest diagonal
+        if ((col2 - col1) == (row2 - row1)) return true;
+
+        // Special case: Diagonal across the missing coordinates (E5, F6, G7, H8)
+        // A1 to L8 diagonal and similar paths
+        if ((col1 >= 'A' && col1 <= 'D' && col2 >= 'I' && col2 <= 'L') || 
+            (col1 >= 'I' && col1 <= 'L' && col2 >= 'A' && col2 <= 'D'))
         {
-            // Parse the positions
-            if (position1.Length < 2 || position2.Length < 2) return false;
-            char col1 = position1[0];
-            char col2 = position2[0];
-            int row1, row2;
-            if (!int.TryParse(position1.Substring(1), out row1) || !int.TryParse(position2.Substring(1), out row2)) return false;
-
-            // Northwest/Southeast diagonal
-            if ((col2 - col1) == -(row2 - row1)) return true;
-
-            // Northeast/Southwest diagonal
-            if ((col2 - col1) == (row2 - row1)) return true;
-
-            return false;
+            // Calculate the expected row difference based on column difference
+            int colDiff = Math.Abs(col2 - col1);
+            int rowDiff = Math.Abs(row2 - row1);
+            
+            // For the special diagonal that crosses the missing coordinates
+            // The row difference should be less than the column difference
+            // because some coordinates are missing
+            if (colDiff > rowDiff)
+            {
+                // Check if the positions are on the same diagonal line
+                // by verifying if they follow the pattern of the special diagonal
+                
+                // Map columns to numerical values (A=0, B=1, etc.)
+                int colVal1 = col1 - 'A';
+                int colVal2 = col2 - 'A';
+                
+                // Calculate expected row values for the diagonal
+                int expectedRow1, expectedRow2;
+                
+                // If moving from A-D to I-L
+                if (col1 <= 'D' && col2 >= 'I')
+                {
+                    // A1->L8 pattern: row increases with column, but jumps over missing coordinates
+                    expectedRow1 = colVal1 + 1; // A->1, B->2, C->3, D->4
+                    expectedRow2 = (colVal2 - 8) + 5; // I->5, J->6, K->7, L->8
+                }
+                // If moving from I-L to A-D
+                else
+                {
+                    // L8->A1 pattern (reverse direction)
+                    expectedRow1 = (colVal1 - 8) + 5; // I->5, J->6, K->7, L->8
+                    expectedRow2 = colVal2 + 1; // A->1, B->2, C->3, D->4
+                }
+                
+                // Check if the actual rows match the expected rows for this diagonal
+                return (row1 == expectedRow1 && row2 == expectedRow2);
+            }
         }
+        
+        // Special case: E-H columns to I-L columns diagonal jumps
+        if ((col1 >= 'E' && col1 <= 'H' && col2 >= 'I' && col2 <= 'L') ||
+            (col1 >= 'I' && col1 <= 'L' && col2 >= 'E' && col2 <= 'H'))
+        {
+            // Handle diagonal jumps between E-H and I-L columns
+            // For example: E9 to H12 or I5 to L8
+            
+            char firstCol, secondCol;
+            int firstRow, secondRow;
+            
+            // Ensure firstCol is the smaller column
+            if (col1 <= col2)
+            {
+                firstCol = col1;
+                firstRow = row1;
+                secondCol = col2;
+                secondRow = row2;
+            }
+            else
+            {
+                firstCol = col2;
+                firstRow = row2;
+                secondCol = col1;
+                secondRow = row1;
+            }
+            
+            // Check if the column difference matches the row difference
+            int colDiff = secondCol - firstCol;
+            int rowDiff = secondRow - firstRow;
+            
+            // For standard diagonals within these regions
+            return colDiff == rowDiff;
+        }
+
+        return false;
+    }
 
         /// <summary>
         /// Get valid pawn moves for a given position and player.
